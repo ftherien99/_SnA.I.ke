@@ -1,5 +1,6 @@
 import pygame
 from Button import Button
+from SnakeDAO import SnakeDAO
 
 class Main:
     def __init__(self):
@@ -10,12 +11,15 @@ class Main:
         self.showMainMenu()
         self.setGameConfig()
         self.setSimulationConfig()
+        self.snakeDAO = SnakeDAO()
+        self.snakeDAO.dbConnection()
         
         #Window loop
         while self.running:
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
+                    self.snakeDAO.dbCloseConnection()
                     self.running = False
 
             if self.currentMenu == "MainMenu":
@@ -68,9 +72,11 @@ class Main:
                 elif graphButton.clicked(mousePos):
                     pass
                 elif quitButton.clicked(mousePos):
+                    self.snakeDAO.dbCloseConnection()
                     self.running = False
 
             elif event.type == pygame.QUIT:
+                    self.snakeDAO.dbCloseConnection()
                     self.running = False
 
     
