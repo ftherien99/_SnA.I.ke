@@ -25,7 +25,7 @@ class Game:
 
         pygame.display.set_caption("S N A. I. K E")
 
-        self.gameSurface = pygame.draw.rect(self.gameWindow, (0,255,0), (100, 60, 1300, 800), 2)
+        self.gameSurface = pygame.draw.rect(self.gameWindow, (0,255,0), (110, 60, 1320, 800), 2)
 
         font = pygame.font.SysFont("arial", 28)
         scoreText = font.render("Score:", 1, (0,255,0))
@@ -77,6 +77,7 @@ class Game:
 
         pygame.display.update()
         self.fpsClock.tick(10)
+      
         
         
 

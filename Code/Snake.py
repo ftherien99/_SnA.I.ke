@@ -1,5 +1,6 @@
 import pygame
 from collections import deque
+from Point import Point
 
 class Snake:
     def __init__(self, speed, startPointX, startPointY):
@@ -13,11 +14,6 @@ class Snake:
         self.snakeController = SnakeController(self)
         self.currentDirection = "left"
 
-    def grow(self):
-        pass
-
-
-
 
 class Body:
     def __init__(self, startingPoint):
@@ -25,7 +21,6 @@ class Body:
         self.deque = deque([startingPoint])
 
         for i in range(self.length):
-            print(i)
             x = self.deque[i].x
             y = self.deque[i].y
 
@@ -44,17 +39,9 @@ class Body:
 
         self.deque.appendleft(temp)
 
-
-
-class Point:
-    def __init__(self,x ,y):
-        self.x = x
-        self.y = y
-
-
-
-
-
+    def grow(self):
+        pass
+        
 
 class SnakeController:
     def __init__(self, snake):
