@@ -89,6 +89,7 @@ class Main:
 
         pygame.display.update()
         
+        
 
     
     def setGameConfig(self):
