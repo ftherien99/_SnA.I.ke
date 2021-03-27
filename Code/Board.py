@@ -65,7 +65,7 @@ class Board:
                 posY = 42
                 for y in range(0,self.columnCount):
                     posY += 20
-                    pygame.draw.rect(self.gameWindow, (0,0,255), (posX, posY, squareSize, squareSize), 0)
+                    #pygame.draw.rect(self.gameWindow, (0,0,255), (posX, posY, squareSize, squareSize), 0)
                     if self.boardArray[x][y] == "H":
                         pygame.draw.rect(self.gameWindow, (0,0,255), (posX, posY, squareSize, squareSize), 0)
                         
