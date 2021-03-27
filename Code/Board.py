@@ -7,26 +7,30 @@ from Apple import Apple
 class Board:
     def __init__(self, game):
         self.ticClock = pygame.time.Clock()
-        self.apple = Apple(59,33)
+        self.apple = None
         self.width = 1200  
         self.height = 800 
         self.scaledWidth =  self.width//20
         self.scaledHeight =  self.height//20
         self.snake = Snake(1 * game.main.deltaTime, self.scaledWidth/2, self.scaledHeight/2)
         self.boardArray = np.full((self.scaledWidth, self.scaledHeight),'E')
+        self.updateBoardArray()
+        self.addApple()
         self.game = game
         self.gameWindow = self.game.gameWindow
         self.isGameOver = False
-        self.updateBoardArray()
         self.rowCount = self.boardArray.shape[0]
         self.columnCount = self.boardArray.shape[1]
       
         
 
     def addApple(self):
-        x = random.randint(0, self.scaledWidth -1)
-        y = random.randint(0, self.scaledHeight -1)
-        self.apple = Apple(x,y)
+        while True:
+            x = random.randint(0, self.scaledWidth -1)
+            y = random.randint(0, self.scaledHeight -1)
+            if self.boardArray[x][y] == "E":
+                self.apple = Apple(x,y)
+                break
 
     def updateBoardArray(self):
         self.boardArray = np.full((self.scaledWidth, self.scaledHeight),'E')
@@ -48,6 +52,7 @@ class Board:
             self.removeApple()
             self.snake.body.grow(self.snake.currentDirection)
             self.addApple()
+            self.game.score += 10
 
         for i in self.snake.body.deque:
             if i != self.snake.body.deque[0] and i.x == self.snake.body.deque[0].x and i.y == self.snake.body.deque[0].y:
@@ -57,12 +62,12 @@ class Board:
 
     def tic(self):
         try:
-            posX = 92
+            posX = 88
             squareSize = 19
 
             for x in range(0,self.rowCount):
                 posX += 20
-                posY = 42
+                posY = 40
                 for y in range(0,self.columnCount):
                     posY += 20
                     #pygame.draw.rect(self.gameWindow, (0,0,255), (posX, posY, squareSize, squareSize), 0)

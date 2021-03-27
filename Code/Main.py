@@ -31,12 +31,12 @@ class Main:
         
         #Window loop
         while self.running:
-            self.fpsClock.tick(10)
+            self.fpsClock.tick(15)
             #now = time.time()
             #self.deltaTime = now - self.prevTime
             #self.prevTime = now
 
-            print(1 * self.deltaTime)
+         
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
