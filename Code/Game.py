@@ -11,13 +11,13 @@ class Game:
         self.main = main
         self.gameWindow = self.main.menuWindow
         self.gameSurface = None
-        self.isBoardInitialized = False
         self.board = None
         self.createBoard()
         self.showGame()
        
         
     def showGame(self):
+        
         buttonX = 750
         buttonY = 900
 
@@ -25,7 +25,7 @@ class Game:
 
         pygame.display.set_caption("S N A. I. K E")
 
-        self.gameSurface = pygame.draw.rect(self.gameWindow, (0,255,0), (110, 60, 1320, 800), 2)
+        self.gameSurface = pygame.draw.rect(self.gameWindow, (0,255,0), (110, 60, 1200, 800), 2)
 
         font = pygame.font.SysFont("arial", 28)
         scoreText = font.render("Score:", 1, (0,255,0))
@@ -53,7 +53,7 @@ class Game:
             if pauseButton.clicked(mousePos):
                 self.board.snake.snakeController.changeDirection("paused")
             elif resetButton.clicked(mousePos):
-                pass
+                self.createBoard()
             elif quitButton.clicked(mousePos):
                 self.main.currentMenu = "MainMenu"
 
@@ -70,19 +70,18 @@ class Game:
             self.board.snake.snakeController.changeDirection("right")
 
         
-        if self.isBoardInitialized:
+        if self.board.isGameOver == False:
             self.board.tic()
-            
-           
 
-        pygame.display.update()
-        self.fpsClock.tick(10)
+        else:
+            font = pygame.font.SysFont("arial", 60)
+            text = font.render("GAME OVER", 1, (255,0,0))
+            self.gameWindow.blit(text, (585,75))
+
+        #pygame.display.update()
+        self.fpsClock.tick(60)
       
-        
-        
-
         
 
     def createBoard(self):
         self.board = Board(self)
-        self.isBoardInitialized = True

@@ -24,7 +24,7 @@ class Body:
             x = self.deque[i].x
             y = self.deque[i].y
 
-            x += 20
+            x += 1
 
             self.deque.append(Point(x, y))
 
@@ -39,36 +39,53 @@ class Body:
 
         self.deque.appendleft(temp)
 
-    def grow(self):
-        pass
+    def grow(self, direction):
+
+        newPoint = Point(self.deque[self.length].x,self.deque[self.length].y)
+
+        if direction == "up":
+            newPoint.y -= 1
+        elif direction == "down":
+            newPoint.y += 1
+        elif direction == "left":
+            newPoint.x -= 1
+        elif direction == "right":
+            newPoint.x += 1
+
+        self.deque.append(newPoint)
+        self.length += 1
+        
+    
         
 
 class SnakeController:
     def __init__(self, snake):
         self.snake = snake
+        self.lastTicks = pygame.time.get_ticks()
 
     def changeDirection(self, direction):
         
+
         if direction == "up" and self.snake.currentDirection != "down":
-            self.snake.snakeYMovement = -1 * self.snake.speed
+            self.snake.snakeYMovement = -self.snake.speed
             self.snake.snakeXMovement = 0
             self.snake.currentDirection = direction
             
             
         elif direction == "down" and self.snake.currentDirection != "up":
-            self.snake.snakeYMovement = 1 * self.snake.speed
+            self.snake.snakeYMovement = self.snake.speed
             self.snake.snakeXMovement = 0
             self.snake.currentDirection = direction
            
 
         elif direction == "left" and self.snake.currentDirection != "right":
-            self.snake.snakeXMovement = -1 * self.snake.speed
+            self.snake.snakeXMovement = -self.snake.speed
             self.snake.snakeYMovement = 0
             self.snake.currentDirection = direction
            
 
         elif direction == "right" and self.snake.currentDirection != "left":
-            self.snake.snakeXMovement = 1 * self.snake.speed
+            self.snake.snakeXMovement = self.snake.speed
             self.snake.snakeYMovement = 0
             self.snake.currentDirection = direction
            

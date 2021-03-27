@@ -4,6 +4,7 @@ from SnakeDAO import SnakeDAO
 from Game import Game
 from Simulation import Simulation
 from Graph import Graph
+import time
 
 ##GROS BOARD = 1300x800
 ##PETIT BOARD = 1000x700
@@ -23,15 +24,24 @@ class Main:
         self.currentGame = None
         self.currentSimulation = None
         self.graphWindow = None
+        self.fpsClock = pygame.time.Clock()
+        self.prevTime = time.time()
+        self.deltaTime = 1.0
+
         
         #Window loop
         while self.running:
+            self.fpsClock.tick(10)
+            #now = time.time()
+            #self.deltaTime = now - self.prevTime
+            #self.prevTime = now
+
+            print(1 * self.deltaTime)
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.snakeDAO.dbCloseConnection()
                     self.running = False
-
             if self.currentMenu == "MainMenu":
                 self.showMainMenu()
             elif self.currentMenu == "GameConfig":
@@ -44,6 +54,7 @@ class Main:
                 self.currentSimulation.showSimulation()
             elif self.currentMenu == "Graph":
                 self.graphWindow.showGraphWindow()
+            pygame.display.update()
                     
 
     def showMainMenu(self):
@@ -87,7 +98,7 @@ class Main:
                 self.snakeDAO.dbCloseConnection()
                 self.running = False
 
-        pygame.display.update()
+        #pygame.display.update()
         
         
 
@@ -116,7 +127,7 @@ class Main:
             elif cancelButton.clicked(mousePos):
                 self.currentMenu = "MainMenu"
 
-        pygame.display.update()
+        #pygame.display.update()
 
     
     def setSimulationConfig(self):
@@ -144,7 +155,7 @@ class Main:
                 self.currentMenu = "MainMenu"
 
 
-        pygame.display.update()
+        #pygame.display.update()
 
 
 if __name__ == "__main__":
