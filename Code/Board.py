@@ -10,8 +10,8 @@ class Board:
         self.apple = None
         self.width = 1200  
         self.height = 800 
-        self.scaledWidth =  self.width//20
-        self.scaledHeight =  self.height//20
+        self.scaledWidth =  int(self.width/20)
+        self.scaledHeight =  int(self.height/20)
         self.snake = Snake(1 * game.main.deltaTime, self.scaledWidth/2, self.scaledHeight/2)
         self.boardArray = np.full((self.scaledWidth, self.scaledHeight),'E')
         self.updateBoardArray()
@@ -35,7 +35,7 @@ class Board:
     def updateBoardArray(self):
         self.boardArray = np.full((self.scaledWidth, self.scaledHeight),'E')
         for i in self.snake.body.deque:
-            if i.y < 40:
+            if i.y < 60:
                 if i == self.snake.body.deque[0]:
                     self.boardArray[int(i.x), int(i.y)] = 'H'
                 else:
@@ -43,6 +43,7 @@ class Board:
         
         if self.apple != None:
             self.boardArray[self.apple.x,self.apple.y] = 'A'
+
 
     def removeApple(self):
         self.apple = None
@@ -57,25 +58,27 @@ class Board:
         for i in self.snake.body.deque:
             if i != self.snake.body.deque[0] and i.x == self.snake.body.deque[0].x and i.y == self.snake.body.deque[0].y:
                 self.isGameOver = True
-                print(self.snake.speed)
+
+
 
 
     def tic(self):
         try:
-            posX = 88
-            squareSize = 19
+            posX = 92
+            squareSize = 18
 
             for x in range(0,self.rowCount):
                 posX += 20
-                posY = 40
+                posY = 42
                 for y in range(0,self.columnCount):
                     posY += 20
+                    
                     #pygame.draw.rect(self.gameWindow, (0,0,255), (posX, posY, squareSize, squareSize), 0)
                     if self.boardArray[x][y] == "H":
-                        pygame.draw.rect(self.gameWindow, (0,0,255), (posX, posY, squareSize, squareSize), 0)
+                        pygame.draw.rect(self.gameWindow, (255,0,255), (posX, posY, squareSize, squareSize), 0)
                         
                     elif self.boardArray[x][y] == "B":
-                        pygame.draw.rect(self.gameWindow, (0,255,0), (posX, posY, squareSize, squareSize), 0)
+                        pygame.draw.rect(self.gameWindow, (255,0,0), (posX, posY, squareSize, squareSize), 0)
 
                     elif self.boardArray[x][y] == "A":
                             pygame.draw.rect(self.gameWindow, (255,0,0), (posX, posY, squareSize, squareSize), 0)

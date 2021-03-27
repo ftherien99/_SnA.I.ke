@@ -27,7 +27,7 @@ class Game:
 
         pygame.display.set_caption("S N A. I. K E")
 
-        self.gameSurface = pygame.draw.rect(self.gameWindow, (0,255,0), (110, 60, 1200, 800), 2)
+        self.gameSurface = pygame.draw.rect(self.gameWindow, (0,255,0), (110, 60, 1205, 805), 2)
 
         font = pygame.font.SysFont("arial", 28)
         scoreText = font.render("Score: " + str(self.score), 1, (0,255,0))
