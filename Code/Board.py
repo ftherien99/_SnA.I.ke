@@ -75,13 +75,13 @@ class Board:
                     
                     #pygame.draw.rect(self.gameWindow, (0,0,255), (posX, posY, squareSize, squareSize), 0)
                     if self.boardArray[x][y] == "H":
-                        pygame.draw.rect(self.gameWindow, (255,0,255), (posX, posY, squareSize, squareSize), 0)
+                        pygame.draw.rect(self.gameWindow, self.game.headColor, (posX, posY, squareSize, squareSize), 0)
                         
                     elif self.boardArray[x][y] == "B":
-                        pygame.draw.rect(self.gameWindow, (255,0,0), (posX, posY, squareSize, squareSize), 0)
+                        pygame.draw.rect(self.gameWindow, self.game.bodyColor, (posX, posY, squareSize, squareSize), 0)
 
                     elif self.boardArray[x][y] == "A":
-                            pygame.draw.rect(self.gameWindow, (255,0,0), (posX, posY, squareSize, squareSize), 0)
+                            pygame.draw.rect(self.gameWindow, self.game.appleColor, (posX, posY, squareSize, squareSize), 0)
                 
 
             if self.snake.currentDirection != "paused":

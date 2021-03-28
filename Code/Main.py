@@ -5,6 +5,7 @@ from Game import Game
 from Simulation import Simulation
 from Graph import Graph
 import time
+from Color import Color
 
 ##GROS BOARD = 1300x800
 ##PETIT BOARD = 1000x700
@@ -16,9 +17,6 @@ class Main:
         self.menuWindow = None
         self.running = True
         self.currentMenu = "MainMenu"
-        self.showMainMenu()
-        self.setGameConfig()
-        self.setSimulationConfig()
         self.snakeDAO = SnakeDAO()
         self.snakeDAO.dbConnection()
         self.currentGame = None
@@ -27,11 +25,26 @@ class Main:
         self.fpsClock = pygame.time.Clock()
         self.prevTime = time.time()
         self.deltaTime = 1.0
+        self.color = Color()
+        self.headColor = self.snakeDAO.getColors("head")
+        self.bodyColor = self.snakeDAO.getColors("body")
+        self.appleColor = self.snakeDAO.getColors("apple")
+
+        print(self.headColor)
+
+        if self.headColor == (0,0,0) or self.bodyColor == (0,0,0) or self.appleColor == (0,0,0):
+            self.headColor = self.color.darkGreen
+            self.bodyColor = self.color.lightGreen
+            self.appleColor = self.color.red
+            print(self.headColor)
+
+            self.snakeDAO.saveColors(self.headColor,self.bodyColor,self.appleColor)
+       
 
         
         #Window loop
         while self.running:
-            self.fpsClock.tick(15)
+            self.fpsClock.tick(30)
             #now = time.time()
             #self.deltaTime = now - self.prevTime
             #self.prevTime = now
@@ -104,14 +117,53 @@ class Main:
 
     
     def setGameConfig(self):
+        headColorButtons = [None] * 10
+        bodyColorButtons = [None] * 10
+        appleColorButtons = [None] * 10
+        colors = self.color.getColors()
+        i = 0
+        j = 75
 
         self.menuWindow.fill((0,0,0))
 
         font = pygame.font.SysFont("arial", 60)
-        text = font.render("Configuration", 1, (0,255,0))
+        title = font.render("Configuration", 1, (0,255,0))
+        self.menuWindow.blit(title, (625,75))
 
-        self.menuWindow.blit(text, (625,75))
-        
+        font = pygame.font.SysFont("arial", 40)
+        headColor = font.render("Head Color: ", 1, (0,255,0))
+        self.menuWindow.blit(headColor, (250,175))
+
+        for color in colors:
+            headColorButtons[i] = Button(50, 50, 475 + j, 175, color, None)
+            headColorButtons[i].drawButton(self.menuWindow)
+            i += 1
+            j += 75
+
+        bodyColor = font.render("Body Color: ", 1, (0,255,0))
+        self.menuWindow.blit(bodyColor, (250,300))
+
+        i = 0
+        j = 75
+        for color in colors:
+            bodyColorButtons[i] = Button(50, 50, 475 + j, 300, color, None)
+            bodyColorButtons[i].drawButton(self.menuWindow)
+            i += 1
+            j += 75
+
+        i = 0
+        j = 75
+
+        appleColor = font.render("Apple Color: ", 1, (0,255,0))
+        self.menuWindow.blit(appleColor, (250,425))
+
+        for color in colors:
+            appleColorButtons[i] = Button(50, 50, 475 + j, 425, color, None)
+            appleColorButtons[i].drawButton(self.menuWindow)
+            i += 1
+            j += 75
+
+       
         startButton = Button(75,225, 500, 825, (0,255,0), "Start Game")
         startButton.drawButton(self.menuWindow)
 
@@ -121,11 +173,25 @@ class Main:
         if pygame.mouse.get_pressed() == (1,0,0):
             mousePos = pygame.mouse.get_pos()
 
+            for i in range(10):
+                if headColorButtons[i].clicked(mousePos):
+                    self.headColor = headColorButtons[i].color
+                    
+                if bodyColorButtons[i].clicked(mousePos):
+                    self.bodyColor = bodyColorButtons[i].color
+
+                if appleColorButtons[i].clicked(mousePos):
+                    self.appleColor = appleColorButtons[i].color
+
             if startButton.clicked(mousePos):
-                self.currentGame = Game(self)
+                self.currentGame = Game(self, self.headColor, self.bodyColor, self.appleColor)
+                self.snakeDAO.saveColors(self.headColor,self.bodyColor,self.appleColor)
                 self.currentMenu = "Game"
             elif cancelButton.clicked(mousePos):
                 self.currentMenu = "MainMenu"
+
+
+        
 
         #pygame.display.update()
 

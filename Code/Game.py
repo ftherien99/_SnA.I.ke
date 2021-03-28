@@ -5,9 +5,12 @@ from Board import Board
 
 
 class Game:
-    def __init__(self, main): #headColor, bodyColor, appleColor, speed, boardSize
+    def __init__(self, main, headColor, bodyColor, appleColor): #headColor, bodyColor, appleColor, speed, boardSize
         self.fpsClock = pygame.time.Clock()
         self.main = main
+        self.headColor = headColor
+        self.bodyColor = bodyColor
+        self.appleColor = appleColor
         self.gameWindow = self.main.menuWindow
         self.gameSurface = None
         self.score = 0
