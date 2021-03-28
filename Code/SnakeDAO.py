@@ -25,8 +25,6 @@ class SnakeDAO:
     def dbCloseConnection(self):     
         self.connection.close()
         print("Database connection closed")
-<<<<<<< Updated upstream
-=======
 
     def getHighscore(self,gameType):
         try:
@@ -97,4 +95,3 @@ class SnakeDAO:
             self.connection.commit()
         except:
             print("Failed to save color data")
->>>>>>> Stashed changes

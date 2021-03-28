@@ -7,7 +7,7 @@ from Graph import Graph
 
 ##GROS BOARD = 1300x800
 ##PETIT BOARD = 1000x700
-##PAS DE PETIT BOARD POUR AI, JUSTE LE GROS /3
+##POUR AI: GROS BOARD/3 et PETIT BOARD/2
 
 class Main:
     def __init__(self):
