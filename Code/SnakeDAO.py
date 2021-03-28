@@ -94,4 +94,4 @@ class SnakeDAO:
             self.cursor.execute(query,(headColorInt, bodyColorInt, appleColorInt))
             self.connection.commit()
         except:
-            print("Failed to save color data")
+            print("Failed to save colors data")
