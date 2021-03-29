@@ -5,22 +5,25 @@ from Snake import Snake
 from Apple import Apple
 
 class Board:
-    def __init__(self, game):
-        self.ticClock = pygame.time.Clock()
+    def __init__(self, game, width, height,leftPadding, topPadding):
+        self.game = game
         self.apple = None
-        self.width = 1200  
-        self.height = 800 
+        self.width = width - 5
+        self.height = height - 5
+        self.leftPadding = leftPadding - 18
+        self.topPadding = topPadding - 18
         self.scaledWidth =  int(self.width/20)
         self.scaledHeight =  int(self.height/20)
-        self.snake = Snake(1 * game.main.deltaTime, self.scaledWidth/2, self.scaledHeight/2)
+        self.snake = Snake(self.game.snakeSeed * game.main.deltaTime, self.scaledWidth/2, self.scaledHeight/2)
         self.boardArray = np.full((self.scaledWidth, self.scaledHeight),'E')
         self.updateBoardArray()
         self.addApple()
-        self.game = game
         self.gameWindow = self.game.gameWindow
         self.isGameOver = False
         self.rowCount = self.boardArray.shape[0]
         self.columnCount = self.boardArray.shape[1]
+
+        print(len(self.boardArray))
       
         
 
@@ -58,22 +61,25 @@ class Board:
         for i in self.snake.body.deque:
             if i != self.snake.body.deque[0] and i.x == self.snake.body.deque[0].x and i.y == self.snake.body.deque[0].y:
                 self.isGameOver = True
+        
+        if self.snake.body.deque[0].x == -1 or self.snake.body.deque[0].y == -1:
+            self.isGameOver = True
 
 
 
 
     def tic(self):
         try:
-            posX = 92
+            posX = self.leftPadding
             squareSize = 18
 
             for x in range(0,self.rowCount):
                 posX += 20
-                posY = 42
+                posY = self.topPadding
                 for y in range(0,self.columnCount):
                     posY += 20
                     
-                    #pygame.draw.rect(self.gameWindow, (0,0,255), (posX, posY, squareSize, squareSize), 0)
+                    #pygame.draw.rect(self.gameWindow, (18, 18, 18), (posX, posY, squareSize, squareSize), 0)
                     if self.boardArray[x][y] == "H":
                         pygame.draw.rect(self.gameWindow, self.game.headColor, (posX, posY, squareSize, squareSize), 0)
                         

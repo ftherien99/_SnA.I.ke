@@ -29,14 +29,15 @@ class Main:
         self.headColor = self.snakeDAO.getColors("head")
         self.bodyColor = self.snakeDAO.getColors("body")
         self.appleColor = self.snakeDAO.getColors("apple")
+        self.speed = 1.0
+        self.boardSize = "small"
 
-        print(self.headColor)
 
         if self.headColor == (0,0,0) or self.bodyColor == (0,0,0) or self.appleColor == (0,0,0):
             self.headColor = self.color.darkGreen
             self.bodyColor = self.color.lightGreen
             self.appleColor = self.color.red
-            print(self.headColor)
+           
 
             self.snakeDAO.saveColors(self.headColor,self.bodyColor,self.appleColor)
        
@@ -44,12 +45,11 @@ class Main:
         
         #Window loop
         while self.running:
-            self.fpsClock.tick(30)
+            self.fpsClock.tick(10)
             #now = time.time()
             #self.deltaTime = now - self.prevTime
             #self.prevTime = now
 
-         
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -111,15 +111,18 @@ class Main:
                 self.snakeDAO.dbCloseConnection()
                 self.running = False
 
-        #pygame.display.update()
+        
         
         
 
     
     def setGameConfig(self):
+
         headColorButtons = [None] * 10
         bodyColorButtons = [None] * 10
         appleColorButtons = [None] * 10
+        speedButtons = [None] * 3
+        sizeButtons = [None] * 2
         colors = self.color.getColors()
         i = 0
         j = 75
@@ -132,48 +135,60 @@ class Main:
 
         font = pygame.font.SysFont("arial", 40)
         headColor = font.render("Head Color: ", 1, (0,255,0))
-        self.menuWindow.blit(headColor, (250,175))
-
-        for color in colors:
-            headColorButtons[i] = Button(50, 50, 475 + j, 175, color, None)
-            headColorButtons[i].drawButton(self.menuWindow)
-            i += 1
-            j += 75
+        self.menuWindow.blit(headColor, (150,175))
 
         bodyColor = font.render("Body Color: ", 1, (0,255,0))
-        self.menuWindow.blit(bodyColor, (250,300))
-
-        i = 0
-        j = 75
-        for color in colors:
-            bodyColorButtons[i] = Button(50, 50, 475 + j, 300, color, None)
-            bodyColorButtons[i].drawButton(self.menuWindow)
-            i += 1
-            j += 75
-
-        i = 0
-        j = 75
+        self.menuWindow.blit(bodyColor, (150,300))
 
         appleColor = font.render("Apple Color: ", 1, (0,255,0))
-        self.menuWindow.blit(appleColor, (250,425))
+        self.menuWindow.blit(appleColor, (150,425))
 
         for color in colors:
-            appleColorButtons[i] = Button(50, 50, 475 + j, 425, color, None)
+            headColorButtons[i] = Button(50, 50, 375 + j, 175, color, None)
+            headColorButtons[i].drawButton(self.menuWindow)
+
+            bodyColorButtons[i] = Button(50, 50, 375 + j, 300, color, None)
+            bodyColorButtons[i].drawButton(self.menuWindow)
+
+            appleColorButtons[i] = Button(50, 50, 375 + j, 425, color, None)
             appleColorButtons[i].drawButton(self.menuWindow)
+
             i += 1
             j += 75
 
+
+        speed = font.render("Snake Speed: ", 1, (0,255,0))
+        self.menuWindow.blit(speed, (150,550))
+
        
-        startButton = Button(75,225, 500, 825, (0,255,0), "Start Game")
+        j = 75
+        for i in range(3):
+            speedButtons[i] = Button(75, 175, 375 + j, 550, (0,255,0), str(i+1))
+            speedButtons[i].drawButton(self.menuWindow)
+            j += 275
+
+        size = font.render("Board Size: ", 1, (0,255,0))
+        self.menuWindow.blit(size, (150,675))
+
+        j = 75
+        boardSize = "Small Board" 
+        for i in range(2):
+            sizeButtons[i] = Button(75, 325, 375 + j, 675, (0,255,0), boardSize)
+            sizeButtons[i].drawButton(self.menuWindow)
+            boardSize = "Large board"
+            j += 400
+
+
+        startButton = Button(75,225, 500, 875, (0,255,0), "Start Game")
         startButton.drawButton(self.menuWindow)
 
-        cancelButton = Button(75,225, 800, 825, (255,0,0), "Cancel")
+        cancelButton = Button(75,225, 800, 875, (255,0,0), "Cancel")
         cancelButton.drawButton(self.menuWindow)
 
         if pygame.mouse.get_pressed() == (1,0,0):
             mousePos = pygame.mouse.get_pos()
 
-            for i in range(10):
+            for i in range(len(colors)):
                 if headColorButtons[i].clicked(mousePos):
                     self.headColor = headColorButtons[i].color
                     
@@ -183,17 +198,26 @@ class Main:
                 if appleColorButtons[i].clicked(mousePos):
                     self.appleColor = appleColorButtons[i].color
 
+            for i in range(len(speedButtons)):
+                if speedButtons[i].clicked(mousePos):
+                    self.speed = float(speedButtons[i].text)
+                  
+
+            for i in range(len(sizeButtons)):
+                if sizeButtons[i].clicked(mousePos):
+                    if sizeButtons[i].text == "Small Board":
+                        self.boardSize = "small"
+                    else:
+                        self.boardSize = "large"
+                    
+
             if startButton.clicked(mousePos):
-                self.currentGame = Game(self, self.headColor, self.bodyColor, self.appleColor)
+                self.currentGame = Game(self, self.headColor, self.bodyColor, self.appleColor, self.speed, self.boardSize)
                 self.snakeDAO.saveColors(self.headColor,self.bodyColor,self.appleColor)
                 self.currentMenu = "Game"
             elif cancelButton.clicked(mousePos):
                 self.currentMenu = "MainMenu"
 
-
-        
-
-        #pygame.display.update()
 
     
     def setSimulationConfig(self):
@@ -220,8 +244,6 @@ class Main:
             elif cancelButton.clicked(mousePos):
                 self.currentMenu = "MainMenu"
 
-
-        #pygame.display.update()
 
 
 if __name__ == "__main__":

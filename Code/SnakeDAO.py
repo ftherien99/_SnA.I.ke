@@ -53,7 +53,7 @@ class SnakeDAO:
     def saveHighscore(self,gameType, highscore):
         query = "UPDATE highscores SET " + gameType + " = %s WHERE id = 1"
         try:
-            self.cursor.execute(query,(highscore))
+            self.cursor.execute(query,[highscore])
 
             self.connection.commit()
         except:

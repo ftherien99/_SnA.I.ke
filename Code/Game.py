@@ -5,20 +5,41 @@ from Board import Board
 
 
 class Game:
-    def __init__(self, main, headColor, bodyColor, appleColor): #headColor, bodyColor, appleColor, speed, boardSize
+    def __init__(self, main, headColor, bodyColor, appleColor, snakeSpeed, boardSize): #speed, boardSize
         self.fpsClock = pygame.time.Clock()
         self.main = main
         self.headColor = headColor
         self.bodyColor = bodyColor
         self.appleColor = appleColor
+        self.snakeSeed = snakeSpeed
+        self.boardSize = boardSize
         self.gameWindow = self.main.menuWindow
         self.gameSurface = None
         self.score = 0
-        self.highscore = self.main.snakeDAO.getHighscore("large_board_play")
         self.board = None
+        self.isNewHighscore = False
+        self.isHighscoreSaved = False
+
+        if self.boardSize == "small":
+            self.boardWidth = 1005
+            self.boardHeight = 605
+            self.boardLeftPadding = 220
+            self.boardTopPadding = 60
+            self.highScoreType = "small_board_play"
+        else:
+            self.boardWidth = 1205
+            self.boardHeight = 805
+            self.boardLeftPadding = 110
+            self.boardTopPadding = 60
+            self.highScoreType = "large_board_play"
+
+        self.highscore = self.main.snakeDAO.getHighscore(self.highScoreType)
+
+        if self.highscore == None:
+            self.highscore = 0
+
         self.createBoard()
         self.showGame()
-        self.isNewHighscore = False
        
         
     def showGame(self):
@@ -30,13 +51,13 @@ class Game:
 
         pygame.display.set_caption("S N A. I. K E")
 
-        self.gameSurface = pygame.draw.rect(self.gameWindow, (0,255,0), (110, 60, 1205, 805), 2)
+        self.gameSurface = pygame.draw.rect(self.gameWindow, (0,255,0), (self.boardLeftPadding, self.boardTopPadding, self.boardWidth, self.boardHeight), 2)
 
         font = pygame.font.SysFont("arial", 28)
         scoreText = font.render("Score: " + str(self.score), 1, (0,255,0))
         self.gameWindow.blit(scoreText, (100,925))
 
-        highscoreText = font.render("Highscore: " + str(self.highscore), 1, (0,255,0)) #va aller chercher la valeur dans la bd
+        highscoreText = font.render("Highscore: " + str(self.highscore), 1, (0,255,0))
         self.gameWindow.blit(highscoreText, (375,925))
 
         if self.score > self.highscore:
@@ -61,7 +82,7 @@ class Game:
             elif resetButton.clicked(mousePos):
                 self.createBoard()
                 self.score = 0
-                self.highscore = self.main.snakeDAO.getHighscore("large_board_play")
+                self.highscore = self.main.snakeDAO.getHighscore(self.highScoreType)
                 self.isNewHighscore = False
             elif quitButton.clicked(mousePos):
                 self.main.currentMenu = "MainMenu"
@@ -93,14 +114,12 @@ class Game:
             if self.isNewHighscore:
                 scoreText = font.render("New Highscore!", 1, (0,255,0))
                 self.gameWindow.blit(scoreText, (570,450))
-                self.main.snakeDAO.saveHighscore("large_board_play",self.score)
+                if self.isHighscoreSaved != True:
+                    self.main.snakeDAO.saveHighscore(self.highScoreType,self.score)
+                    self.isHighscoreSaved = True
 
-
-
-        #pygame.display.update()
-        self.fpsClock.tick(60)
       
         
 
     def createBoard(self):
-        self.board = Board(self)
+        self.board = Board(self,self.boardWidth, self.boardHeight, self.boardLeftPadding, self.boardTopPadding)
