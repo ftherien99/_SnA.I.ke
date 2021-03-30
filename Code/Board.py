@@ -5,23 +5,24 @@ from Snake import Snake
 from Apple import Apple
 
 class Board:
-    def __init__(self, game, width, height,leftPadding, topPadding):
+    def __init__(self, game, width, height,leftPadding, topPadding, squareSize):
         self.game = game
         self.apple = None
-        self.width = width - 5
-        self.height = height - 5
         self.leftPadding = leftPadding - 18
         self.topPadding = topPadding - 18
-        self.scaledWidth =  int(self.width/20)
-        self.scaledHeight =  int(self.height/20)
+        self.scaledWidth = width
+        self.scaledHeight = height
+        self.squareSize = squareSize
         self.snake = Snake(self.game.snakeSeed * game.main.deltaTime, self.scaledWidth/2, self.scaledHeight/2)
         self.boardArray = np.full((self.scaledWidth, self.scaledHeight),'E')
         self.updateBoardArray()
         self.addApple()
-        self.gameWindow = self.game.gameWindow
+        self.window = self.game.window
         self.isGameOver = False
         self.rowCount = self.boardArray.shape[0]
         self.columnCount = self.boardArray.shape[1]
+
+        print(self.scaledWidth, self.scaledHeight)
 
         print(len(self.boardArray))
       
@@ -71,23 +72,23 @@ class Board:
     def tic(self):
         try:
             posX = self.leftPadding
-            squareSize = 18
-
+            squarePosition = self.squareSize + 2
             for x in range(0,self.rowCount):
-                posX += 20
+                posX += squarePosition
                 posY = self.topPadding
                 for y in range(0,self.columnCount):
-                    posY += 20
+                    posY += squarePosition
                     
-                    #pygame.draw.rect(self.gameWindow, (18, 18, 18), (posX, posY, squareSize, squareSize), 0)
+                    pygame.draw.rect(self.window, (0,0,255), (posX, posY, self.squareSize, self.squareSize), 0)
+                    #pygame.draw.rect(self.window, (18, 18, 18), (posX, posY, self.squareSize, self.squareSize), 0)
                     if self.boardArray[x][y] == "H":
-                        pygame.draw.rect(self.gameWindow, self.game.headColor, (posX, posY, squareSize, squareSize), 0)
+                        pygame.draw.rect(self.window, self.game.headColor, (posX, posY, self.squareSize, self.squareSize), 0)
                         
                     elif self.boardArray[x][y] == "B":
-                        pygame.draw.rect(self.gameWindow, self.game.bodyColor, (posX, posY, squareSize, squareSize), 0)
+                        pygame.draw.rect(self.window, self.game.bodyColor, (posX, posY, self.squareSize, self.squareSize), 0)
 
                     elif self.boardArray[x][y] == "A":
-                            pygame.draw.rect(self.gameWindow, self.game.appleColor, (posX, posY, squareSize, squareSize), 0)
+                            pygame.draw.rect(self.window, self.game.appleColor, (posX, posY, self.squareSize, self.squareSize), 0)
                 
 
             if self.snake.currentDirection != "paused":
