@@ -3,13 +3,12 @@ from collections import deque
 from Point import Point
 
 class Snake:
-    def __init__(self, speed, startPointX, startPointY):
+    def __init__(self, startPointX, startPointY):
         self.snakeStartPoint = Point(startPointX, startPointY)
         self.headcolor = None
         self.bodyColor = None
         self.body = Body(self.snakeStartPoint)
-        self.speed = speed
-        self.snakeXMovement = -1 * self.speed
+        self.snakeXMovement = -1
         self.snakeYMovement = 0
         self.snakeController = SnakeController(self)
         self.currentDirection = "left"
@@ -65,27 +64,28 @@ class SnakeController:
 
     def changeDirection(self, direction):
         
+        #gachette
 
         if direction == "up" and self.snake.currentDirection != "down":
-            self.snake.snakeYMovement = -self.snake.speed
+            self.snake.snakeYMovement = -1
             self.snake.snakeXMovement = 0
             self.snake.currentDirection = direction
             
             
         elif direction == "down" and self.snake.currentDirection != "up":
-            self.snake.snakeYMovement = self.snake.speed
+            self.snake.snakeYMovement = 1
             self.snake.snakeXMovement = 0
             self.snake.currentDirection = direction
            
 
         elif direction == "left" and self.snake.currentDirection != "right":
-            self.snake.snakeXMovement = -self.snake.speed
+            self.snake.snakeXMovement = -1
             self.snake.snakeYMovement = 0
             self.snake.currentDirection = direction
            
 
         elif direction == "right" and self.snake.currentDirection != "left":
-            self.snake.snakeXMovement = self.snake.speed
+            self.snake.snakeXMovement = 1
             self.snake.snakeYMovement = 0
             self.snake.currentDirection = direction
            

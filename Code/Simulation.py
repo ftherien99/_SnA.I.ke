@@ -57,7 +57,10 @@ class Simulation:
             mousePos = pygame.mouse.get_pos()
 
             if pauseButton.clicked(mousePos):
-                pass
+                self.board1.snake.snakeController.changeDirection("paused")
+                self.board2.snake.snakeController.changeDirection("paused")
+                self.board3.snake.snakeController.changeDirection("paused")
+                self.board4.snake.snakeController.changeDirection("paused")
             elif resetButton.clicked(mousePos):
                 pass
             elif quitButton.clicked(mousePos):

@@ -2,6 +2,7 @@ import pygame
 from Button import Button
 from SnakeDAO import SnakeDAO
 from Board import Board
+import time
 
 
 class Game:
@@ -11,7 +12,7 @@ class Game:
         self.headColor = headColor
         self.bodyColor = bodyColor
         self.appleColor = appleColor
-        self.snakeSeed = snakeSpeed
+        self.snakeSpeed = snakeSpeed
         self.boardSize = boardSize
         self.gameWindow = self.main.menuWindow
         self.gameSurface = None
@@ -99,9 +100,12 @@ class Game:
         elif pygame.key.get_pressed()[pygame.K_d]:
             self.board.snake.snakeController.changeDirection("right")
 
-        
+      
+
+     
         if self.board.isGameOver == False:
             self.board.tic()
+ 
 
         else:
             font = pygame.font.SysFont("arial", 60)

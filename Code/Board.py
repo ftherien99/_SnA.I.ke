@@ -3,6 +3,7 @@ import random
 import numpy as np
 from Snake import Snake
 from Apple import Apple
+import time
 
 class Board:
     def __init__(self, game, width, height,leftPadding, topPadding):
@@ -12,9 +13,10 @@ class Board:
         self.height = height - 5
         self.leftPadding = leftPadding - 18
         self.topPadding = topPadding - 18
-        self.scaledWidth =  int(self.width/20)
-        self.scaledHeight =  int(self.height/20)
-        self.snake = Snake(self.game.snakeSeed * game.main.deltaTime, self.scaledWidth/2, self.scaledHeight/2)
+        self.scaledWidth = width
+        self.scaledHeight = height
+        self.squareSize = squareSize
+        self.snake = Snake(self.scaledWidth/2, self.scaledHeight/2)
         self.boardArray = np.full((self.scaledWidth, self.scaledHeight),'E')
         self.updateBoardArray()
         self.addApple()
@@ -22,8 +24,8 @@ class Board:
         self.isGameOver = False
         self.rowCount = self.boardArray.shape[0]
         self.columnCount = self.boardArray.shape[1]
-
-        print(len(self.boardArray))
+        self.cumulTime = 0
+        self.prevTime = time.time()
       
         
 
@@ -64,12 +66,21 @@ class Board:
         
         if self.snake.body.deque[0].x == -1 or self.snake.body.deque[0].y == -1:
             self.isGameOver = True
+            print("gameOver")
 
 
 
 
     def tic(self):
         try:
+            
+            now = time.time()
+            deltaTime = now - self.prevTime
+            self.prevTime = now
+            self.cumulTime += deltaTime
+            speed = 1/self.game.snakeSpeed
+
+
             posX = self.leftPadding
             squareSize = 18
 
@@ -79,7 +90,8 @@ class Board:
                 for y in range(0,self.columnCount):
                     posY += 20
                     
-                    #pygame.draw.rect(self.gameWindow, (18, 18, 18), (posX, posY, squareSize, squareSize), 0)
+                    
+                    pygame.draw.rect(self.window, (18, 18, 18), (posX, posY, self.squareSize, self.squareSize), 0)
                     if self.boardArray[x][y] == "H":
                         pygame.draw.rect(self.gameWindow, self.game.headColor, (posX, posY, squareSize, squareSize), 0)
                         
@@ -87,14 +99,18 @@ class Board:
                         pygame.draw.rect(self.gameWindow, self.game.bodyColor, (posX, posY, squareSize, squareSize), 0)
 
                     elif self.boardArray[x][y] == "A":
-                            pygame.draw.rect(self.gameWindow, self.game.appleColor, (posX, posY, squareSize, squareSize), 0)
-                
+                            pygame.draw.rect(self.window, self.game.appleColor, (posX, posY, self.squareSize, self.squareSize), 0)
 
-            if self.snake.currentDirection != "paused":
-                self.snake.body.rotate(self.snake.snakeXMovement, self.snake.snakeYMovement)
+            if self.cumulTime > speed:
+                self.cumulTime -= speed
+                if self.snake.currentDirection != "paused":
+                    self.snake.body.rotate(self.snake.snakeXMovement, self.snake.snakeYMovement)   
+
+           
 
             self.snakeCollision()
             self.updateBoardArray()
 
         except IndexError:
             self.isGameOver = True
+            print("gameOver")
