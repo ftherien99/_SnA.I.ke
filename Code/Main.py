@@ -7,9 +7,6 @@ from Graph import Graph
 import time
 from Color import Color
 
-##GROS BOARD = 1300x800
-##PETIT BOARD = 1000x700
-##POUR AI: GROS BOARD/3 et PETIT BOARD/2
 
 class Main:
     def __init__(self):
@@ -24,12 +21,11 @@ class Main:
         self.graphWindow = None
         self.fpsClock = pygame.time.Clock()
         self.prevTime = time.time()
-        self.deltaTime = 1.0
         self.color = Color()
         self.headColor = self.snakeDAO.getColors("head")
         self.bodyColor = self.snakeDAO.getColors("body")
         self.appleColor = self.snakeDAO.getColors("apple")
-        self.speed = 1.0
+        self.speed = 10
         self.boardSize = "small"
 
 
@@ -45,11 +41,7 @@ class Main:
         
         #Window loop
         while self.running:
-            self.fpsClock.tick(10)
-            #now = time.time()
-            #self.deltaTime = now - self.prevTime
-            #self.prevTime = now
-
+            self.fpsClock.tick(60)
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -200,7 +192,13 @@ class Main:
 
             for i in range(len(speedButtons)):
                 if speedButtons[i].clicked(mousePos):
-                    self.speed = float(speedButtons[i].text)
+                    if speedButtons[i].text == "1":
+                        self.speed = 10
+                    elif speedButtons[i].text == "2":
+                        self.speed = 15
+                    else:
+                        self.speed = 20
+                  
                   
 
             for i in range(len(sizeButtons)):
