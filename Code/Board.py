@@ -98,8 +98,11 @@ class Board:
                     elif self.boardArray[x][y] == "A":
                             pygame.draw.rect(self.window, self.game.appleColor, (posX, posY, self.squareSize, self.squareSize), 0)
 
+            #Gachette (faire le mouvement quand cumulTime devient plus grand que la vitesse, voir lignes 75 à6
+            #  79)
             if self.cumulTime > speed:
                 self.cumulTime -= speed
+                #Action
                 if self.snake.currentDirection != "paused":
                     self.snake.body.rotate(self.snake.snakeXMovement, self.snake.snakeYMovement)   
 
