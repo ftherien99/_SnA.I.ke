@@ -8,27 +8,27 @@ import torch.optim as optim
 
 class QNetwork(nn.Module):
 
-    def __init__(self, learningRate, actionDims, fc1Dims, fc2Dims, numberOfActions):
+    def __init__(self, learningRate, actionDims, layer1Dims, layer2Dims, numberOfActions):
         super(QNetwork, self).__init__()
 
         #NUMBER OF NEURONS
         self.actionDims = actionDims
-        self.fc1Dims = fc1Dims
-        self.fc2Dims = fc2Dims
+        self.layer1Dims = layer1Dims
+        self.layer2Dims = layer2Dims
 
         self.numberOfActions = numberOfActions
         self.learningRate = learningRate
 
         #LAYERS
-        self.fc1 = nn.Linear(self.actionDims,self.fc1Dims)
-        self.fc2 = nn.Linear(self.fc1Dims, self.fc2Dims)
-        self.fc3 = nn.Linear(self.fc2Dims, self.numberOfActions)
+        self.layer1 = nn.Linear(self.actionDims,self.layer1Dims)
+        self.layer2 = nn.Linear(self.layer1Dims, self.layer2Dims)
+        self.layer3 = nn.Linear(self.layer2Dims, self.numberOfActions)
 
         self.optimizer = optim.Adam(self.parameters(), lr = self.learningRate)
         self.loss = nn.MSELoss()
         
         if torch.cuda.is_available():
-            self.device = torch.device("cuda:0")
+            self.device = torch.device("cuda:0") #GPU
         else:
             self.device = torch.device("cpu")
 
