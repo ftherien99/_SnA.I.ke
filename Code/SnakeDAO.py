@@ -1,6 +1,7 @@
 import psycopg2
+from DAO import DAO
 
-class SnakeDAO:
+class SnakeDAO(DAO):
     def __init__(self):
         self.connection = None
         self.cursor = None

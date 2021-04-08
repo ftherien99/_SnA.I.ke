@@ -8,11 +8,17 @@ import torch.optim as optim
 
 class QNetwork(nn.Module):
 
-    def __init__(self, learningRate, actionDims, layer1Dims, layer2Dims, numberOfActions):
+    def __init__(self, learningRate, inputDims, layer1Dims, layer2Dims, numberOfActions):
         super(QNetwork, self).__init__()
 
+        #INPUT DIMS = STATE
+        #inputDims[0] = posX
+        #inputDims[1] = posY
+        #inputDims[2] = bodyLength
+        #inputDims[4] = contact with apple (1 if yes, 0 if not)
+        
         #NUMBER OF NEURONS
-        self.actionDims = actionDims
+        self.inputDims = inputDims
         self.layer1Dims = layer1Dims
         self.layer2Dims = layer2Dims
 
@@ -20,7 +26,7 @@ class QNetwork(nn.Module):
         self.learningRate = learningRate
 
         #LAYERS
-        self.layer1 = nn.Linear(self.actionDims,self.layer1Dims)
+        self.layer1 = nn.Linear(self.inputDims,self.layer1Dims)
         self.layer2 = nn.Linear(self.layer1Dims, self.layer2Dims)
         self.layer3 = nn.Linear(self.layer2Dims, self.numberOfActions)
 
