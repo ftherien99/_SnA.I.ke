@@ -1,6 +1,9 @@
 from collections import deque
+from collections import namedtuple
 import numpy as np
 import torch
+import random 
+
 class ReplayBuffer:
     def __init__(self,bufferSize, batchSize):
         self.bufferSize = bufferSize
@@ -28,4 +31,6 @@ class ReplayBuffer:
         rewards = torch.from_numpy(np.vstack([e.reward for e in experiences if e is not None])).float().to(self.device)
         nextStates = torch.from_numpy(np.vstack([e.nextState for e in experiences if e is not None])).float().to(self.device)
         isDones = torch.from_numpy(np.vstack([e.isDone for e in experiences if e is not None]).astype(np.uint8)).float().to(self.device)
-        return (states,actions,rewards,nextStates)
+
+     
+        return (states,actions,rewards,nextStates, isDones)

@@ -1,17 +1,19 @@
 from QNetwork import QNetwork
 from ReplayBuffer import ReplayBuffer
 import torch
+import torch.nn.functional as F
 import numpy as np
 import random
 
 class Agent:
 
-    def __init__(self, bufferSize, batchSize, gamma, epsilon, epsilonMin = 0.01, epsilonDecr = 5e-4, tau, learningRate, updateNetwork, inputDims, numberOfActions, boards):
+    def __init__(self, bufferSize, batchSize, gamma, epsilon, epsilonMin, epsilonDecr, tau, learningRate, updateNetwork, inputDims, numberOfActions):
         self.bufferSize = bufferSize
         self.batchSize = batchSize
         self.gamma = gamma
         self.epsilon = epsilon
         self.epsilonMin = epsilonMin
+        self.epsilonDecr = epsilonDecr
         self.tau = tau
         self.learningRate = learningRate
         self.updateNetwork = updateNetwork
@@ -22,8 +24,7 @@ class Agent:
         self.qNetworkTarget = QNetwork(self.learningRate, self.inputDims, 256, 256, self.numberOfActions)
         self.agentMemory = ReplayBuffer(self.bufferSize, self.batchSize)
         self.timesteps = 0
-        self.actionSpace = [i for in range(self.numberOfActions)]
-        self.boards = boards
+        self.actionSpace = [i for i in range(self.numberOfActions)]
 
 
 
@@ -41,14 +42,14 @@ class Agent:
 
 
     def act(self, state, epsilon):
-        state = torch.from_numpy(state).float.unsqueeze(0).to(self.qNetworkLocal.device)
+        state = torch.Tensor([state]).to(self.qNetworkLocal.device)
         self.qNetworkLocal.eval() # dit au QNetwork de faire une evaluation
 
         with torch.no_grad():
             actionValues = self.qNetworkLocal.forward(state)
 
         if random.random() > epsilon: #Si on depasse epsilon, faire une action ''greedy'', sinon faire une action random
-            action =  np.argmax(actionValues.cpu().data.numpy())
+            action =  torch.argmax(actionValues).item()
         else:
             action =  random.choice(np.arange(self.numberOfActions))
 
@@ -56,6 +57,7 @@ class Agent:
 
 
     def learn(self, experiences, gamma):
+       
         states, actions, rewards, nextStates, isDones = experiences
 
         qTargetNext = self.qNetworkTarget(nextStates).detach().max(1)[0].unsqueeze(1)
@@ -68,7 +70,7 @@ class Agent:
 
         self.qNetworkLocal.optimizer.zero_grad()
         loss.backward()
-        self.optimizer.step()
+        self.qNetworkLocal.optimizer.step()
 
         self.targetQNetworkUpdate(self.qNetworkLocal, self.qNetworkTarget, self.tau)
 

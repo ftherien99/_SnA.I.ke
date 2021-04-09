@@ -34,6 +34,7 @@ class QNetwork(nn.Module):
         self.loss = nn.MSELoss()
         
         if torch.cuda.is_available():
+            print("YES YES YES")
             self.device = torch.device("cuda:0") #GPU
         else:
             self.device = torch.device("cpu")
@@ -43,7 +44,7 @@ class QNetwork(nn.Module):
 
 
     def forward(self, state):
-        x = F.relu(self.fc1(state))
-        x = F.relu(self.fc2(x))
-        action = F.relu(self.fc3(x))
+        x = F.relu(self.layer1(state))
+        x = F.relu(self.layer2(x))
+        action = F.relu(self.layer3(x))
         return action
