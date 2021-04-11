@@ -14,18 +14,20 @@ class Simulation:
         self.headColor = headColor
         self.bodyColor = bodyColor
         self.appleColor = appleColor
-        self.snakeSpeed = 1
+        self.snakeSpeed = 70
         self.boardSize = boardSize
         self.window = self.main.menuWindow
         self.gameSurface = None
         self.score = 0
+        self.scoreCheck = 0
         self.board1 = None
         self.board2 = None
         self.board3 = None
         self.board4 = None
         self.isNewHighscore = False
         self.isHighscoreSaved = False
-        self.agent = Agent(int(1e5), 64, 0.99, 1.0, 0.1, 5e-4, 1e-3, 0.003, 4, 4, 4)
+        self.agent = Agent(4, 4, 0)
+        
 
         if self.boardSize == "small":
             self.boardWidth = 1005/2
@@ -62,9 +64,8 @@ class Simulation:
 
         self.createBoards()
         self.showSimulation()
-       
         
-
+        
 
     def showSimulation(self):
         buttonX = 850
@@ -105,23 +106,20 @@ class Simulation:
         quitButton = Button(75,225, buttonX + 500, buttonY, (255,0,0), "Quit")
         quitButton.drawButton(self.window)
 
-        
-        self.board1.tic()
         self.board2.tic()
         self.board3.tic()
         self.board4.tic()
 
-        #self.deepQLearning()
-        #print("FUCKING FUCK GUCK")
 
         if pygame.mouse.get_pressed() == (1,0,0):
             mousePos = pygame.mouse.get_pos()
 
             if pauseButton.clicked(mousePos):
-                self.board1.snake.snakeController.changeDirection("paused")
-                self.board2.snake.snakeController.changeDirection("paused")
-                self.board3.snake.snakeController.changeDirection("paused")
-                self.board4.snake.snakeController.changeDirection("paused")
+               #self.board1.snake.snakeController.changeDirection("paused")
+               #self.board2.snake.snakeController.changeDirection("paused")
+               #self.board3.snake.snakeController.changeDirection("paused")
+               #self.board4.snake.snakeController.changeDirection("paused")
+               self.deepQLearning()
             elif resetButton.clicked(mousePos):
                 self.createBoards()
                 self.score = 0
@@ -132,33 +130,37 @@ class Simulation:
 
        
     def deepQLearning(self):
-        scores = []
-        scoreWindow = deque(maxlen=100)
-        epsilon = self.agent.epsilon
+        scoreWindow, eps = [], []
+        epsilon = 1.0
+        epsilonMin = 0.01
+        epsilonDecr = 0.995
+       
 
-
-        for episode in range(1, 2000):
-            state = self.getState()
+        for episode in range(7500):
             score = 0
-            for t in range(1000):
-                action = self.agent.act(state, epsilon)
+            isDone = False
+            self.board1 = Board(self,self.boardArrayX, self.boardArrayY, self.boardLeftPadding, self.boardTopPadding, 8)
+            state = self.getState()
+            while not isDone:
+                pygame.event.get()
+                action = self.agent.act(state)
                 nextState, reward, isDone = self.simulationStep(action)
-                nextState = self.getState()
-                reward = 0.5
-                isDone = False
                 self.agent.step(state, action, reward,nextState,isDone)
                 state = nextState
                 score += reward
+                self.board1.tic()
+                pygame.display.update()
                 if isDone:
+                    torch.save(self.agent.qNetworkLocal.state_dict(), 'checkpoint.pth')
                     break
             scoreWindow.append(score)
-            scores.append(score)
-            epsilon = max(self.agent.epsilonMin, self.agent.epsilonDecr * epsilon)
+            eps.append(epsilon)
+            avgScore = np.mean(scoreWindow[-100:])
+            print("episode: ", episode, "  score %.2f " % score, "  average score %.2f:" % avgScore, "  epsilon %.2f" % epsilon)
+            epsilon = max(epsilonMin, epsilonDecr * epsilon)
+            
 
-            if np.mean(scoreWindow) >= 200.0:
-                torch.save(self.agent.qNetworkLocal.state_dict(), "agentCheckpoint.pth")
-                break
-        return scores
+        
 
 
     def createBoards(self):
@@ -178,13 +180,38 @@ class Simulation:
         return state
 
     def simulationStep(self, action):
-        if action == 0:
-            self.board1.snake.currentDirection == "up"
-        elif action == 1:
-            self.board1.snake.currentDirection == "down"
-        elif action == 2:
-            self.board1.snake.currentDirection == "left"
-        elif action == 3:
-            self.board1.snake.currentDirection == "right"
+        reward = 0
+        isDone = False
 
-        return self.getState(), 0.5, False
+        if action == 0:
+            self.board1.snake.snakeController.changeDirection("up")
+        elif action == 1:
+            self.board1.snake.snakeController.changeDirection("down")
+        elif action == 2:
+            self.board1.snake.snakeController.changeDirection("left")
+        elif action == 3:
+            self.board1.snake.snakeController.changeDirection("right")
+
+
+        if self.board1.isGameOver == False:
+            reward += 0.5
+
+        #if self.board1.snake.body.deque[0].x == self.board1.apple.x:
+        #    reward += 50
+        #    print("X")
+#
+        #if self.board1.snake.body.deque[0].y == self.board1.apple.y:
+        #    reward += 50
+        #    print("Y")
+#
+        #if self.scoreCheck < self.score:
+        #    self.scoreCheck += 10
+        #    reward += 300
+        #    print("APPLE")
+
+        if self.board1.isGameOver:
+            reward -= 200
+            isDone = True
+           
+
+        return self.getState(), reward, isDone

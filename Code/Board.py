@@ -34,6 +34,7 @@ class Board:
             if self.boardArray[x][y] == "E":
                 self.apple = Apple(x,y)
                 break
+        
 
     def updateBoardArray(self):
         self.boardArray = np.full((self.scaledWidth, self.scaledHeight),'E')
@@ -64,7 +65,7 @@ class Board:
         
         if self.snake.body.deque[0].x == -1 or self.snake.body.deque[0].y == -1:
             self.isGameOver = True
-            print("gameOver")
+            
 
 
 
@@ -113,4 +114,4 @@ class Board:
 
         except IndexError:
             self.isGameOver = True
-            print("gameOver")
+            

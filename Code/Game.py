@@ -104,8 +104,6 @@ class Game:
         elif pygame.key.get_pressed()[pygame.K_d]:
             self.board.snake.snakeController.changeDirection("right")
 
-      
-
      
         if self.board.isGameOver == False:
             self.board.tic()

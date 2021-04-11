@@ -16,7 +16,7 @@ class Snake:
 
 class Body:
     def __init__(self, startingPoint):
-        self.length = 10
+        self.length = 3
         self.deque = deque([startingPoint])
 
         for i in range(self.length):

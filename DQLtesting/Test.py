@@ -11,9 +11,9 @@ env.seed(0)
 print('State shape: ', env.observation_space.shape)
 print('Number of actions: ', env.action_space.n)
 
-from dqn_agent import Agent
+from Agent import Agent
 
-agent = Agent(state_size=8, action_size=4, seed=0)
+agent = Agent(8, 4, 0)
 
 # watch an untrained agent
 state = env.reset()
@@ -24,7 +24,7 @@ for j in range(200):
     if done:
         break 
         
-env.close()
+#env.close()
 
 def dqn(n_episodes=2000, max_t=1000, eps_start=1.0, eps_end=0.01, eps_decay=0.995):
     """Deep Q-Learning.
@@ -49,7 +49,6 @@ def dqn(n_episodes=2000, max_t=1000, eps_start=1.0, eps_end=0.01, eps_decay=0.99
             agent.step(state, action, reward, next_state, done)
             state = next_state
             score += reward
-            print(done)
             if done:
                 break 
         scores_window.append(score)       # save most recent score
