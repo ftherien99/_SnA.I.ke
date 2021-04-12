@@ -3,6 +3,7 @@ from Button import Button
 from SnakeDAO import SnakeDAO
 from Board import Board
 import time
+import numpy as np
 
 
 class Game:
@@ -107,6 +108,7 @@ class Game:
      
         if self.board.isGameOver == False:
             self.board.tic()
+            self.getSnakeVision()
  
 
         else:

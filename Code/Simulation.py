@@ -14,7 +14,7 @@ class Simulation:
         self.headColor = headColor
         self.bodyColor = bodyColor
         self.appleColor = appleColor
-        self.snakeSpeed = 70
+        self.snakeSpeed = 30
         self.boardSize = boardSize
         self.window = self.main.menuWindow
         self.gameSurface = None
@@ -27,6 +27,7 @@ class Simulation:
         self.isNewHighscore = False
         self.isHighscoreSaved = False
         self.agent = Agent(4, 4, 0)
+        self.distance = None
         
 
         if self.boardSize == "small":
@@ -140,7 +141,8 @@ class Simulation:
             score = 0
             isDone = False
             self.board1 = Board(self,self.boardArrayX, self.boardArrayY, self.boardLeftPadding, self.boardTopPadding, 8)
-            state = self.getState()
+            state = self.getState(0)
+            self.getSnakeVision()
             while not isDone:
                 pygame.event.get()
                 action = self.agent.act(state)
@@ -170,18 +172,35 @@ class Simulation:
         self.board4 = Board(self,self.boardArrayX, self.boardArrayY, self.boardLeftPadding + self.boardDistanceX + 10, self.boardTopPadding + self.boardDistanceY + 10, 8)
 
 
-    def getState(self):
+    def getState(self, appleEaten):
         state = np.zeros(4)
+        
+        
         state[0] = self.board1.snake.body.deque[0].x
         state[1] = self.board1.snake.body.deque[0].y
         state[2] = self.board1.snake.body.length
-        state[3] = 0
+        state[3] = appleEaten
 
         return state
 
     def simulationStep(self, action):
         reward = 0
         isDone = False
+        apple = False
+       
+        appleX = self.board1.apple.x
+        appleY = self.board1.apple.y
+
+        headX = self.board1.snake.body.deque[0].x
+        headY = self.board1.snake.body.deque[0].y
+
+        temp = 0
+
+        if self.distance == None:
+            self.distance =  ((((headX - appleX)**2) + ((headY - appleY)**2))**0.5)
+        else:
+            temp = ((((headX - appleX)**2) + ((headY - appleY)**2))**0.5)
+
 
         if action == 0:
             self.board1.snake.snakeController.changeDirection("up")
@@ -192,26 +211,49 @@ class Simulation:
         elif action == 3:
             self.board1.snake.snakeController.changeDirection("right")
 
+       
+        if temp < self.distance:
+            reward += 2
+            self.distance = temp
+        else:
+            reward -= 0.2
+            self.distance = temp
 
-        if self.board1.isGameOver == False:
-            reward += 0.5
-
-        #if self.board1.snake.body.deque[0].x == self.board1.apple.x:
-        #    reward += 50
-        #    print("X")
-#
-        #if self.board1.snake.body.deque[0].y == self.board1.apple.y:
-        #    reward += 50
-        #    print("Y")
-#
-        #if self.scoreCheck < self.score:
-        #    self.scoreCheck += 10
-        #    reward += 300
-        #    print("APPLE")
+        if self.scoreCheck < self.score:
+            reward += 30
+            self.scoreCheck = self.score
+            apple = True
 
         if self.board1.isGameOver:
-            reward -= 200
+            reward -= 50
             isDone = True
+            self.timeAlive = 0
            
 
-        return self.getState(), reward, isDone
+        return self.getState(False), reward, isDone
+
+
+     def getSnakeVision(self):
+        headX = self.board.snake.body.deque[0].x
+        headY = self.board.snake.body.deque[0].y
+        boardArray = self.board.boardArray
+        snakeDirection = self.board.snake.currentDirection
+        
+        vision = np.full((9, 9),'E')
+        rowIncr = -5
+
+        for i in range(9):
+            rowIncr += 1
+            columnIncr = -4
+            for j in range(9):
+                try:
+                    if headX + columnIncr >= 0 and headY + rowIncr >= 0:
+                        vision[i][j] = boardArray[int(headX + columnIncr)][int(headY + rowIncr)]
+                    else:
+                        vision[i][j] = "W"
+                except:
+                    vision[i][j] = "W"
+                columnIncr += 1
+       
+        
+        return vision
