@@ -108,7 +108,6 @@ class Game:
      
         if self.board.isGameOver == False:
             self.board.tic()
-            self.getSnakeVision()
  
 
         else:

@@ -26,7 +26,7 @@ class Simulation:
         self.board4 = None
         self.isNewHighscore = False
         self.isHighscoreSaved = False
-        self.agent = Agent(4, 4, 0)
+        self.agent = Agent(3, 4, 0)
         self.distance = None
         
 
@@ -135,14 +135,15 @@ class Simulation:
         epsilon = 1.0
         epsilonMin = 0.01
         epsilonDecr = 0.995
-       
+        episodeNb = 600
+        episodeCounter = 0
 
-        for episode in range(7500):
+        for episode in range(episodeNb):
+            episodeCounter += 1
             score = 0
             isDone = False
             self.board1 = Board(self,self.boardArrayX, self.boardArrayY, self.boardLeftPadding, self.boardTopPadding, 8)
             state = self.getState(0)
-            self.getSnakeVision()
             while not isDone:
                 pygame.event.get()
                 action = self.agent.act(state)
@@ -153,13 +154,15 @@ class Simulation:
                 self.board1.tic()
                 pygame.display.update()
                 if isDone:
-                    torch.save(self.agent.qNetworkLocal.state_dict(), 'checkpoint.pth')
                     break
             scoreWindow.append(score)
             eps.append(epsilon)
             avgScore = np.mean(scoreWindow[-100:])
             print("episode: ", episode, "  score %.2f " % score, "  average score %.2f:" % avgScore, "  epsilon %.2f" % epsilon)
             epsilon = max(epsilonMin, epsilonDecr * epsilon)
+            if episodeCounter == 200:
+                torch.save(self.agent.qNetworkLocal.state_dict(), 'qNetwork.pth')
+
             
 
         
@@ -173,13 +176,15 @@ class Simulation:
 
 
     def getState(self, appleEaten):
-        state = np.zeros(4)
-        
-        
-        state[0] = self.board1.snake.body.deque[0].x
-        state[1] = self.board1.snake.body.deque[0].y
-        state[2] = self.board1.snake.body.length
-        state[3] = appleEaten
+        #vision = self.getSnakeVision()
+        #vision = vision.astype('float32')
+        #return vision
+
+        state = []
+        state.append(self.board1.snake.body.deque[0].x)
+        state.append(self.board1.snake.body.deque[0].y)
+        state.append(self.board1.snake.body.length)
+        state = np.array(state)
 
         return state
 
@@ -233,13 +238,13 @@ class Simulation:
         return self.getState(False), reward, isDone
 
 
-     def getSnakeVision(self):
-        headX = self.board.snake.body.deque[0].x
-        headY = self.board.snake.body.deque[0].y
-        boardArray = self.board.boardArray
-        snakeDirection = self.board.snake.currentDirection
+    def getSnakeVision(self):
+        headX = self.board1.snake.body.deque[0].x
+        headY = self.board1.snake.body.deque[0].y
+        boardArray = self.board1.boardArray
+        snakeDirection = self.board1.snake.currentDirection
         
-        vision = np.full((9, 9),'E')
+        vision = np.full((9, 9),'1')
         rowIncr = -5
 
         for i in range(9):
@@ -250,10 +255,9 @@ class Simulation:
                     if headX + columnIncr >= 0 and headY + rowIncr >= 0:
                         vision[i][j] = boardArray[int(headX + columnIncr)][int(headY + rowIncr)]
                     else:
-                        vision[i][j] = "W"
+                        vision[i][j] = "5"
                 except:
-                    vision[i][j] = "W"
+                    vision[i][j] = "5"
                 columnIncr += 1
        
-        
         return vision

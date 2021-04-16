@@ -5,6 +5,7 @@ import torch.nn.functional as F
 import numpy as np
 import random
 import torch.optim as optim
+from os import path
 
 class Agent:
 
@@ -15,7 +16,7 @@ class Agent:
             self.device = torch.device("cpu")
 
         self.bufferSize = int(1e5)
-        self.batchSize = 64
+        self.batchSize = 64 ###
         self.gamma = 0.99
         self.tau = 1e-3
         self.learningRate = 5e-4 
@@ -24,7 +25,14 @@ class Agent:
         self.numberOfActions = numberOfActions
         self.seed = random.seed(seed)
 
-        self.qNetworkLocal = QNetwork(self.inputDims, self.numberOfActions, seed, 64,64).to(self.device)
+        if path.exists("qNetwork.pth"): #Va prendre le qNetowrk entraine
+            self.qNetworkLocal = QNetwork(self.inputDims, self.numberOfActions, seed,64,64).to(self.device)
+            self.qNetworkLocal.load_state_dict(torch.load("qNetwork.pth"))
+            self.qNetworkLocal.eval()
+        else:
+            self.qNetworkLocal = QNetwork(self.inputDims, self.numberOfActions, seed,64,64).to(self.device)
+
+
         self.qNetworkTarget = QNetwork(self.inputDims, self.numberOfActions, seed, 64,64).to(self.device)
         self.optimizer = optim.Adam(self.qNetworkLocal.parameters(), self.learningRate)
 
@@ -52,7 +60,7 @@ class Agent:
         self.qNetworkLocal.eval() # dit au QNetwork de faire une evaluation
 
         with torch.no_grad():
-            actionValues = self.qNetworkLocal(state)
+            actionValues = self.qNetworkLocal.forward(state)
         self.qNetworkLocal.train()
 
         if random.random() > epsilon: #Si on depasse epsilon, faire une action ''greedy'', sinon faire une action random

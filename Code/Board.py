@@ -31,32 +31,23 @@ class Board:
         while True:
             x = random.randint(0, self.scaledHeight -1)
             y = random.randint(0, self.scaledWidth -1)
-            if self.boardArray[x][y] == "E":
+            if self.boardArray[x][y] == "1":
                 self.apple = Apple(x,y)
                 break
         
 
     def updateBoardArray(self):
-        self.boardArray = np.full((self.scaledHeight, self.scaledWidth),'E')
-
-        for i in range(self.scaledHeight): #top and bottom walls
-            self.boardArray[i][0] = "W"
-            self.boardArray[i][self.columnCount - 1] = "W"
-
-        for i in range(self.scaledWidth): #left and right walls
-            self.boardArray[0][i] = "W"
-            self.boardArray[self.rowCount - 1][i] = "W"
-
+        self.boardArray = np.full((self.scaledHeight, self.scaledWidth),'1')
 
         for i in self.snake.body.deque:
             if i.y < 60:
                 if i == self.snake.body.deque[0]:
-                    self.boardArray[int(i.x), int(i.y)] = 'H'
+                    self.boardArray[int(i.x), int(i.y)] = '2'
                 else:
-                    self.boardArray[int(i.x),int(i.y)] = 'B'
+                    self.boardArray[int(i.x),int(i.y)] = '3'
         
         if self.apple != None:
-            self.boardArray[self.apple.x,self.apple.y] = 'A'
+            self.boardArray[self.apple.x,self.apple.y] = '4'
 
 
     def removeApple(self):
@@ -100,13 +91,13 @@ class Board:
                     
                     pygame.draw.rect(self.window, (18, 18, 18), (posX, posY, self.squareSize, self.squareSize), 0)
 
-                    if self.boardArray[i][j] == "H":
+                    if self.boardArray[i][j] == "2":
                         pygame.draw.rect(self.window, self.game.headColor, (posX, posY, self.squareSize, self.squareSize), 0)
                         
-                    elif self.boardArray[i][j] == "B":
+                    elif self.boardArray[i][j] == "3":
                         pygame.draw.rect(self.window, self.game.bodyColor, (posX, posY, self.squareSize, self.squareSize), 0)
 
-                    elif self.boardArray[i][j] == "A":
+                    elif self.boardArray[i][j] == "4":
                             pygame.draw.rect(self.window, self.game.appleColor, (posX, posY, self.squareSize, self.squareSize), 0)
 
             #Gachette (faire le mouvement quand cumulTime devient plus grand que la vitesse, voir lignes 75 à6
