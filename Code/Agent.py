@@ -26,6 +26,7 @@ class Agent:
         self.seed = random.seed(seed)
 
         if path.exists("qNetwork.pth"): #Va prendre le qNetowrk entraine
+            print("IM LEARNING FATHER")
             self.qNetworkLocal = QNetwork(self.inputDims, self.numberOfActions, seed,64,64).to(self.device)
             self.qNetworkLocal.load_state_dict(torch.load("qNetwork.pth"))
             self.qNetworkLocal.eval()

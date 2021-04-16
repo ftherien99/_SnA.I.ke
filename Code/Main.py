@@ -27,6 +27,7 @@ class Main:
         self.appleColor = self.snakeDAO.getColors("apple")
         self.speed = 10
         self.boardSize = "small"
+        self.numberOfEpisodes = 200
 
 
         if self.headColor == (0,0,0) or self.bodyColor == (0,0,0) or self.appleColor == (0,0,0):
@@ -154,7 +155,7 @@ class Main:
 
        
         j = 75
-        for i in range(3):
+        for i in range(len(speedButtons)):
             speedButtons[i] = Button(75, 175, 475 + j, 650, (0,255,0), str(i+1))
             speedButtons[i].drawButton(self.menuWindow)
             j += 275
@@ -223,6 +224,7 @@ class Main:
         headColorButtons = [None] * 10
         bodyColorButtons = [None] * 10
         appleColorButtons = [None] * 10
+        episodeButtons = [None] * 4
         sizeButtons = [None] * 2
         colors = self.color.getColors()
         i = 0
@@ -257,6 +259,15 @@ class Main:
             i += 1
             j += 75
 
+        episodes = font.render("Episode number: ", 1, (0,255,0))
+        self.menuWindow.blit(episodes, (250,650))
+
+        j = 75
+        for i in range(len(episodeButtons)):
+            episodeButtons[i] = Button(75, 125, 475 + j, 650, (0,255,0), str((i+1)*200))
+            episodeButtons[i].drawButton(self.menuWindow)
+            j += 200
+
 
         size = font.render("Board Size: ", 1, (0,255,0))
         self.menuWindow.blit(size, (250,775))
@@ -289,6 +300,12 @@ class Main:
                 if appleColorButtons[i].clicked(mousePos):
                     self.appleColor = appleColorButtons[i].color
                   
+            
+            for i in range(len(episodeButtons)):
+                if episodeButtons[i].clicked(mousePos):
+                    self.numberOfEpisodes = int(episodeButtons[i].text)
+                    
+
 
             for i in range(len(sizeButtons)):
                 if sizeButtons[i].clicked(mousePos):
@@ -299,7 +316,7 @@ class Main:
                     
 
             if startButton.clicked(mousePos):
-                self.currentSimulation = Simulation(self, self.headColor, self.bodyColor, self.appleColor, self.boardSize)
+                self.currentSimulation = Simulation(self, self.headColor, self.bodyColor, self.appleColor, self.boardSize, self.numberOfEpisodes)
                 self.snakeDAO.saveColors(self.headColor,self.bodyColor,self.appleColor)
                 self.currentMenu = "Simulation"
             elif cancelButton.clicked(mousePos):

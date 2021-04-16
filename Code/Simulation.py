@@ -8,7 +8,7 @@ import numpy as np
 import torch
 
 class Simulation:
-    def __init__(self, main, headColor, bodyColor, appleColor, boardSize): 
+    def __init__(self, main, headColor, bodyColor, appleColor, boardSize, numberOfEpisodes): 
         self.fpsClock = pygame.time.Clock()
         self.main = main
         self.headColor = headColor
@@ -28,6 +28,8 @@ class Simulation:
         self.isHighscoreSaved = False
         self.agent = Agent(3, 4, 0)
         self.distance = None
+        self.numberOfEpisodes = numberOfEpisodes
+        print(self.numberOfEpisodes)
         
 
         if self.boardSize == "small":
@@ -135,10 +137,9 @@ class Simulation:
         epsilon = 1.0
         epsilonMin = 0.01
         epsilonDecr = 0.995
-        episodeNb = 600
         episodeCounter = 0
-
-        for episode in range(episodeNb):
+        print(self.numberOfEpisodes)
+        for episode in range(self.numberOfEpisodes):
             episodeCounter += 1
             score = 0
             isDone = False
@@ -154,6 +155,7 @@ class Simulation:
                 self.board1.tic()
                 pygame.display.update()
                 if isDone:
+                    episodeCounter += 1
                     break
             scoreWindow.append(score)
             eps.append(epsilon)
@@ -162,6 +164,8 @@ class Simulation:
             epsilon = max(epsilonMin, epsilonDecr * epsilon)
             if episodeCounter == 200:
                 torch.save(self.agent.qNetworkLocal.state_dict(), 'qNetwork.pth')
+                print("Saving QNetwork")
+                episodeCounter = 0
 
             
 
