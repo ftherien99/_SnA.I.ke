@@ -29,7 +29,9 @@ class Simulation:
         self.agent = Agent(3, 4, 0)
         self.distance = None
         self.numberOfEpisodes = numberOfEpisodes
-        print(self.numberOfEpisodes)
+        self.startButton = None
+        self.resetButton = None
+        self.quitButton = None
         
 
         if self.boardSize == "small":
@@ -100,35 +102,26 @@ class Simulation:
         episodeTimeText = font.render("Episode time (sec):", 1, (0,255,0))
         self.window.blit(episodeTimeText, (1300,325))
 
-        pauseButton = Button(75,225, buttonX, buttonY, (0,255,0), "Pause")
-        pauseButton.drawButton(self.window)
+        self.startButton = Button(75,225, buttonX, buttonY, (0,255,0), "Start")
+        self.startButton.drawButton(self.window)
 
-        resetButton = Button(75,225, buttonX + 250, buttonY, (0,255,0), "Reset")
-        resetButton.drawButton(self.window)
+        self.resetButton = Button(75,225, buttonX + 250, buttonY, (0,255,0), "Reset")
+        self.resetButton.drawButton(self.window)
 
-        quitButton = Button(75,225, buttonX + 500, buttonY, (255,0,0), "Quit")
-        quitButton.drawButton(self.window)
+        self.quitButton = Button(75,225, buttonX + 500, buttonY, (255,0,0), "Quit")
+        self.quitButton.drawButton(self.window)
 
-        self.board2.tic()
-        self.board3.tic()
-        self.board4.tic()
-
+        #self.board2.tic()
+        #self.board3.tic()
+        #self.board4.tic()
 
         if pygame.mouse.get_pressed() == (1,0,0):
             mousePos = pygame.mouse.get_pos()
 
-            if pauseButton.clicked(mousePos):
-               #self.board1.snake.snakeController.changeDirection("paused")
-               #self.board2.snake.snakeController.changeDirection("paused")
-               #self.board3.snake.snakeController.changeDirection("paused")
-               #self.board4.snake.snakeController.changeDirection("paused")
+            if self.startButton.clicked(mousePos):
                self.deepQLearning()
-            elif resetButton.clicked(mousePos):
-                self.createBoards()
-                self.score = 0
-                self.highscore = self.main.snakeDAO.getHighscore(self.highScoreType)
-                self.isNewHighscore = False
-            elif quitButton.clicked(mousePos):
+           
+            elif self.quitButton.clicked(mousePos):
                 self.main.currentMenu = "MainMenu"
 
        
@@ -138,7 +131,8 @@ class Simulation:
         epsilonMin = 0.01
         epsilonDecr = 0.995
         episodeCounter = 0
-        print(self.numberOfEpisodes)
+        
+
         for episode in range(self.numberOfEpisodes):
             episodeCounter += 1
             score = 0
@@ -146,7 +140,21 @@ class Simulation:
             self.board1 = Board(self,self.boardArrayX, self.boardArrayY, self.boardLeftPadding, self.boardTopPadding, 8)
             state = self.getState(0)
             while not isDone:
-                pygame.event.get()
+                
+                for event in pygame.event.get(): #si on clique sur le X
+                    if event.type == pygame.QUIT:
+                        self.main.snakeDAO.dbCloseConnection()
+                        self.main.running = False
+                        exit()
+
+                if pygame.mouse.get_pressed() == (1,0,0):
+                    mousePos = pygame.mouse.get_pos()
+
+                    if self.quitButton.clicked(mousePos):
+                        self.main.currentMenu = "MainMenu"
+                        break
+
+                
                 action = self.agent.act(state)
                 nextState, reward, isDone = self.simulationStep(action)
                 self.agent.step(state, action, reward,nextState,isDone)
@@ -166,6 +174,9 @@ class Simulation:
                 torch.save(self.agent.qNetworkLocal.state_dict(), 'qNetwork.pth')
                 print("Saving QNetwork")
                 episodeCounter = 0
+            
+            if self.main.currentMenu == "MainMenu":
+                break 
 
             
 

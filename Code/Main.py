@@ -259,7 +259,7 @@ class Main:
             i += 1
             j += 75
 
-        episodes = font.render("Episode number: ", 1, (0,255,0))
+        episodes = font.render("Nº of episodes: ", 1, (0,255,0))
         self.menuWindow.blit(episodes, (250,650))
 
         j = 75
