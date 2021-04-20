@@ -6,15 +6,15 @@ from Agent import Agent
 from collections import deque
 import numpy as np
 import torch
+import time
 
 class Simulation:
     def __init__(self, main, headColor, bodyColor, appleColor, boardSize, numberOfEpisodes): 
-        self.fpsClock = pygame.time.Clock()
         self.main = main
         self.headColor = headColor
         self.bodyColor = bodyColor
         self.appleColor = appleColor
-        self.snakeSpeed = 30
+        self.snakeSpeed = 100
         self.boardSize = boardSize
         self.window = self.main.menuWindow
         self.gameSurface = None
@@ -32,7 +32,11 @@ class Simulation:
         self.startButton = None
         self.resetButton = None
         self.quitButton = None
-        
+        self.agentCurrentScore = 0
+        self.avgScore = 0
+        self.episodes = 0
+        self.epsilon = 0
+        self.steps = 0
 
         if self.boardSize == "small":
             self.boardWidth = 1005/2
@@ -46,6 +50,8 @@ class Simulation:
             self.boardDistanceX = 540
             self.boardDistanceY = 340
 
+            self.displayedinfoX = 1245
+
             self.highScoreType = "small_board_ai"
         else:
             self.boardWidth = 1205/2
@@ -58,6 +64,8 @@ class Simulation:
             #La distance entre chaque board
             self.boardDistanceX = 640
             self.boardDistanceY = 440
+
+            self.displayedinfoX = 1300
 
             self.highScoreType = "large_board_ai"
 
@@ -90,17 +98,24 @@ class Simulation:
         highscoreText = font.render("Highscore: " + str(self.highscore), 1, (0,255,0)) #va aller chercher la valeur dans la bd
         self.window.blit(highscoreText, (375,1025))
 
-        agentRewardText = font.render("Agent Reward:", 1, (0,255,0))
-        self.window.blit(agentRewardText, (1300,100))
+        agentRewardText = font.render("Cur. Reward: " + str(round(self.agentCurrentScore,2)), 1, (0,255,0))
+        self.window.blit(agentRewardText, (self.displayedinfoX,75))
 
-        episodeText = font.render("Episode:", 1, (0,255,0))
-        self.window.blit(episodeText, (1300,175))
+        agentAvgRewardText = font.render("Avg. Reward: " + str(round(self.avgScore,2)), 1, (0,255,0))
+        self.window.blit(agentAvgRewardText, (self.displayedinfoX,150))
 
-        stepsText = font.render("Steps:", 1, (0,255,0))
-        self.window.blit(stepsText, (1300,250))
+        episodeText = font.render("Episode:   " + str(self.episodes) + "/" + str(self.numberOfEpisodes), 1, (0,255,0))
+        self.window.blit(episodeText, (self.displayedinfoX,225))
+
+        stepsText = font.render("Steps:   " + str(self.steps) + "/2000", 1, (0,255,0))
+        self.window.blit(stepsText, (self.displayedinfoX,300))
+
+        epsilonText = font.render("Epsilon: " + str(round(self.epsilon,2)), 1, (0,255,0))
+        self.window.blit(epsilonText, (self.displayedinfoX,375))
 
         episodeTimeText = font.render("Episode time (sec):", 1, (0,255,0))
-        self.window.blit(episodeTimeText, (1300,325))
+        self.window.blit(episodeTimeText, (self.displayedinfoX,450))
+
 
         self.startButton = Button(75,225, buttonX, buttonY, (0,255,0), "Start")
         self.startButton.drawButton(self.window)
@@ -132,12 +147,12 @@ class Simulation:
         print(self.numberOfEpisodes)
 
         for episode in range(self.numberOfEpisodes):
-            episodeCounter += 1
+            self.episodes = episode
             score = 0
             isDone = False
             self.board1 = Board(self,self.boardArrayX, self.boardArrayY, self.boardLeftPadding, self.boardTopPadding, 8)
             state = self.getState(0)
-            for i in range(10000):
+            for steps in range(2000):
                 
                 for event in pygame.event.get(): #si on clique sur le X
                     if event.type == pygame.QUIT:
@@ -158,9 +173,14 @@ class Simulation:
                 self.agent.step(state, action, reward,nextState,isDone)
                 state = nextState
                 score += reward
+                self.steps = steps
+                self.agentCurrentScore = score
                 self.board1.tic()
                 pygame.display.update()
+                self.steps = steps
+                self.showSimulation()
                 if isDone:
+                    self.score = 0
                     break
 
             episodeCounter += 1
@@ -169,11 +189,13 @@ class Simulation:
             avgScore = np.mean(scoreWindow[-100:])
             print("episode: ", episode, "  score %.2f " % score, "  average score %.2f:" % avgScore, "  epsilon %.2f" % epsilon)
             epsilon = max(epsilonMin, epsilonDecr * epsilon)
+            self.avgScore = avgScore
+            self.epsilon = epsilon
 
-            if episodeCounter == 200:
-                torch.save(self.agent.qNetworkLocal.state_dict(), 'qNetwork.pth')
-                print("Saving QNetwork")
-                episodeCounter = 0
+            #if episodeCounter == 200:
+            #    torch.save(self.agent.qNetworkLocal.state_dict(), 'qNetwork.pth')
+            #    print("Saving QNetwork")
+            #    episodeCounter = 0
             
             if self.main.currentMenu == "MainMenu":
                 break 
@@ -241,32 +263,9 @@ class Simulation:
 
        
         if temp < self.distance:
-           
-            #if temp <= 5:
-            #    reward += 2
-            #elif temp <= 10:
-            #    reward += 1.5
-            #elif temp <= 15:
-            #    reward += 1
-            #elif temp <= 25:
-            #    reward += 0.5
-            #else:
-            #    reward += 0.2
-
             reward += 0.5
             self.distance = temp
         else:
-            
-            #if temp <= 5:
-            #    reward -= 0.2
-            #elif temp <= 10:
-            #    reward -= 0.4
-            #elif temp <= 15:
-            #    reward -= 0.6
-            #elif temp <= 25:
-            #    reward -= 0.8
-            #else:
-            #    reward -= 1.2
             reward -= 0.1
             self.distance = temp
 
