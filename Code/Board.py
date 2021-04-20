@@ -38,16 +38,16 @@ class Board:
 
     def updateBoardArray(self):
         self.boardArray = np.full((self.scaledHeight, self.scaledWidth),'1')
-
-        for i in self.snake.body.deque:
-            if i.y < 60:
-                if i == self.snake.body.deque[0]:
-                    self.boardArray[int(i.x), int(i.y)] = '2'
-                else:
-                    self.boardArray[int(i.x),int(i.y)] = '3'
-        
-        if self.apple != None:
-            self.boardArray[self.apple.x,self.apple.y] = '4'
+        if not self.isGameOver:
+            for i in self.snake.body.deque:
+                if i.y < 60:
+                    if i == self.snake.body.deque[0]:
+                        self.boardArray[int(i.x), int(i.y)] = '2'
+                    else:
+                        self.boardArray[int(i.x),int(i.y)] = '3'
+            
+            if self.apple != None:
+                self.boardArray[self.apple.x,self.apple.y] = '4'
 
 
     def removeApple(self):

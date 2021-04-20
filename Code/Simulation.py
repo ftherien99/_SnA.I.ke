@@ -26,7 +26,7 @@ class Simulation:
         self.board4 = None
         self.isNewHighscore = False
         self.isHighscoreSaved = False
-        self.agent = Agent(3, 4, 0)
+        self.agent = Agent(8, 4, 0)
         self.distance = None
         self.numberOfEpisodes = numberOfEpisodes
         self.startButton = None
@@ -111,15 +111,13 @@ class Simulation:
         self.quitButton = Button(75,225, buttonX + 500, buttonY, (255,0,0), "Quit")
         self.quitButton.drawButton(self.window)
 
-        #self.board2.tic()
-        #self.board3.tic()
-        #self.board4.tic()
 
         if pygame.mouse.get_pressed() == (1,0,0):
             mousePos = pygame.mouse.get_pos()
 
             if self.startButton.clicked(mousePos):
-               self.deepQLearning()
+               
+                self.deepQLearning()
            
             elif self.quitButton.clicked(mousePos):
                 self.main.currentMenu = "MainMenu"
@@ -127,11 +125,11 @@ class Simulation:
        
     def deepQLearning(self):
         scoreWindow, eps = [], []
-        epsilon = 1.0
+        epsilon = 0.9
         epsilonMin = 0.01
         epsilonDecr = 0.995
         episodeCounter = 0
-        
+        print(self.numberOfEpisodes)
 
         for episode in range(self.numberOfEpisodes):
             episodeCounter += 1
@@ -139,7 +137,7 @@ class Simulation:
             isDone = False
             self.board1 = Board(self,self.boardArrayX, self.boardArrayY, self.boardLeftPadding, self.boardTopPadding, 8)
             state = self.getState(0)
-            while not isDone:
+            for i in range(10000):
                 
                 for event in pygame.event.get(): #si on clique sur le X
                     if event.type == pygame.QUIT:
@@ -163,13 +161,15 @@ class Simulation:
                 self.board1.tic()
                 pygame.display.update()
                 if isDone:
-                    episodeCounter += 1
                     break
+
+            episodeCounter += 1
             scoreWindow.append(score)
             eps.append(epsilon)
             avgScore = np.mean(scoreWindow[-100:])
             print("episode: ", episode, "  score %.2f " % score, "  average score %.2f:" % avgScore, "  epsilon %.2f" % epsilon)
             epsilon = max(epsilonMin, epsilonDecr * epsilon)
+
             if episodeCounter == 200:
                 torch.save(self.agent.qNetworkLocal.state_dict(), 'qNetwork.pth')
                 print("Saving QNetwork")
@@ -195,10 +195,17 @@ class Simulation:
         #vision = vision.astype('float32')
         #return vision
 
+        left, right, up, down = self.getSnakeVision()
+
         state = []
         state.append(self.board1.snake.body.deque[0].x)
         state.append(self.board1.snake.body.deque[0].y)
-        state.append(self.board1.snake.body.length)
+        state.append(self.board1.apple.x)
+        state.append(self.board1.apple.y)
+        state.append(left)
+        state.append(right)
+        state.append(up)
+        state.append(down)
         state = np.array(state)
 
         return state
@@ -218,6 +225,7 @@ class Simulation:
 
         if self.distance == None:
             self.distance =  ((((headX - appleX)**2) + ((headY - appleY)**2))**0.5)
+            
         else:
             temp = ((((headX - appleX)**2) + ((headY - appleY)**2))**0.5)
 
@@ -233,10 +241,33 @@ class Simulation:
 
        
         if temp < self.distance:
-            reward += 2
+           
+            #if temp <= 5:
+            #    reward += 2
+            #elif temp <= 10:
+            #    reward += 1.5
+            #elif temp <= 15:
+            #    reward += 1
+            #elif temp <= 25:
+            #    reward += 0.5
+            #else:
+            #    reward += 0.2
+
+            reward += 0.5
             self.distance = temp
         else:
-            reward -= 0.2
+            
+            #if temp <= 5:
+            #    reward -= 0.2
+            #elif temp <= 10:
+            #    reward -= 0.4
+            #elif temp <= 15:
+            #    reward -= 0.6
+            #elif temp <= 25:
+            #    reward -= 0.8
+            #else:
+            #    reward -= 1.2
+            reward -= 0.1
             self.distance = temp
 
         if self.scoreCheck < self.score:
@@ -258,21 +289,52 @@ class Simulation:
         headY = self.board1.snake.body.deque[0].y
         boardArray = self.board1.boardArray
         snakeDirection = self.board1.snake.currentDirection
+        leftObstacle = 0
+        rightObstacle = 0
+        upObstacle = 0
+        downObstacle = 0
         
         vision = np.full((9, 9),'1')
         rowIncr = -5
 
-        for i in range(9):
-            rowIncr += 1
-            columnIncr = -4
-            for j in range(9):
-                try:
-                    if headX + columnIncr >= 0 and headY + rowIncr >= 0:
-                        vision[i][j] = boardArray[int(headX + columnIncr)][int(headY + rowIncr)]
-                    else:
-                        vision[i][j] = "5"
-                except:
-                    vision[i][j] = "5"
-                columnIncr += 1
+        #for i in range(9):
+        #    rowIncr += 1
+        #    columnIncr = -4
+        #    for j in range(9):
+        #        try:
+        #            if headX + columnIncr >= 0 and headY + rowIncr >= 0:
+        #                vision[i][j] = boardArray[int(headX + columnIncr)][int(headY + rowIncr)]
+        #            else:
+        #                vision[i][j] = "5"
+        #        except:
+        #            vision[i][j] = "5"
+        #        columnIncr += 1
+        try:
+            if boardArray[int(headX - 1)][int(headY)] != "1":
+                leftObstacle = 1
+                
+            else:
+                leftObstacle = 0
+
+            if boardArray[int(headX + 1)][int(headY)] != "1":
+                rightObstacle = 1
+                
+            else:
+                rightObstacle = 0
+
+            if boardArray[int(headX)][int(headY - 1)] != "1":
+                upObstacle = 1
+                
+            else:
+                upObstacle = 0
+
+            if boardArray[int(headX)][int(headY + 1)] != "1":
+                downObstacle = 1
+                
+            else:
+                downObstacle = 0
+
+        except:
+            pass
        
-        return vision
+        return leftObstacle, rightObstacle, upObstacle, downObstacle

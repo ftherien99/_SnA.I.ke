@@ -16,7 +16,7 @@ class Snake:
 
 class Body:
     def __init__(self, startingPoint):
-        self.length = 3
+        self.length = 1
         self.deque = deque([startingPoint])
 
         for i in range(self.length):
@@ -39,20 +39,25 @@ class Body:
         self.deque.appendleft(temp)
 
     def grow(self, direction):
-
+        incr = 1
+        
+        if self.length == 1:
+            incr = 2
+        
         newPoint = Point(self.deque[self.length].x,self.deque[self.length].y)
 
         if direction == "up":
-            newPoint.y -= 1
+            newPoint.y -= incr
         elif direction == "down":
-            newPoint.y += 1
+            newPoint.y += incr
         elif direction == "left":
-            newPoint.x -= 1
+            newPoint.x -= incr
         elif direction == "right":
-            newPoint.x += 1
+            newPoint.x += incr
 
         self.deque.append(newPoint)
         self.length += 1
+        print(self.deque[0].x, self.deque[0].y,self.deque[1].x,self.deque[1].y ,self.deque[2].x, self.deque[2].y)
         
     
         
