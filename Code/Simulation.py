@@ -14,7 +14,7 @@ class Simulation:
         self.headColor = headColor
         self.bodyColor = bodyColor
         self.appleColor = appleColor
-        self.snakeSpeed = 100
+        self.snakeSpeed = 30
         self.boardSize = boardSize
         self.window = self.main.menuWindow
         self.gameSurface = None
@@ -37,6 +37,8 @@ class Simulation:
         self.episodes = 0
         self.epsilon = 0
         self.steps = 0
+        self.maxSteps = 3000
+             
 
         if self.boardSize == "small":
             self.boardWidth = 1005/2
@@ -107,7 +109,7 @@ class Simulation:
         episodeText = font.render("Episode:   " + str(self.episodes) + "/" + str(self.numberOfEpisodes), 1, (0,255,0))
         self.window.blit(episodeText, (self.displayedinfoX,225))
 
-        stepsText = font.render("Steps:   " + str(self.steps) + "/2000", 1, (0,255,0))
+        stepsText = font.render("Steps:   " + str(self.steps) + "/", str(self.maxSteps), 1, (0,255,0))
         self.window.blit(stepsText, (self.displayedinfoX,300))
 
         epsilonText = font.render("Epsilon: " + str(round(self.epsilon,2)), 1, (0,255,0))
@@ -131,7 +133,6 @@ class Simulation:
             mousePos = pygame.mouse.get_pos()
 
             if self.startButton.clicked(mousePos):
-               
                 self.deepQLearning()
            
             elif self.quitButton.clicked(mousePos):
@@ -147,12 +148,14 @@ class Simulation:
         print(self.numberOfEpisodes)
 
         for episode in range(self.numberOfEpisodes):
+            self.score = 0
+            self.scoreCheck = 0
             self.episodes = episode
             score = 0
             isDone = False
             self.board1 = Board(self,self.boardArrayX, self.boardArrayY, self.boardLeftPadding, self.boardTopPadding, 8)
             state = self.getState(0)
-            for steps in range(2000):
+            for steps in range(self.maxSteps):
                 
                 for event in pygame.event.get(): #si on clique sur le X
                     if event.type == pygame.QUIT:
@@ -187,15 +190,15 @@ class Simulation:
             scoreWindow.append(score)
             eps.append(epsilon)
             avgScore = np.mean(scoreWindow[-100:])
-            print("episode: ", episode, "  score %.2f " % score, "  average score %.2f:" % avgScore, "  epsilon %.2f" % epsilon)
+            print("Iteration: ", self.i," episode: ", episode, "  score %.2f " % score, "  average score %.2f:" % avgScore, "  epsilon %.2f" % epsilon)
             epsilon = max(epsilonMin, epsilonDecr * epsilon)
             self.avgScore = avgScore
             self.epsilon = epsilon
 
-            #if episodeCounter == 200:
-            #    torch.save(self.agent.qNetworkLocal.state_dict(), 'qNetwork.pth')
-            #    print("Saving QNetwork")
-            #    episodeCounter = 0
+            if episodeCounter == 200:
+                torch.save(self.agent.qNetworkLocal.state_dict(), 'qNetwork.pth')
+                print("Saving QNetwork")
+                episodeCounter = 0
             
             if self.main.currentMenu == "MainMenu":
                 break 
