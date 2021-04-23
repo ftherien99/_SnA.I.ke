@@ -17,16 +17,13 @@ class Simulation:
         self.snakeSpeed = 30
         self.boardSize = boardSize
         self.window = self.main.menuWindow
-        self.gameSurface = None
+        self.simulaionSurface = None
         self.score = 0
         self.scoreCheck = 0
-        self.board1 = None
-        self.board2 = None
-        self.board3 = None
-        self.board4 = None
+        self.board = None
         self.isNewHighscore = False
         self.isHighscoreSaved = False
-        self.agent = Agent(8, 4, 0)
+        self.agent = Agent(12, 4, 0)
         self.distance = None
         self.numberOfEpisodes = numberOfEpisodes
         self.startButton = None
@@ -41,32 +38,25 @@ class Simulation:
              
 
         if self.boardSize == "small":
-            self.boardWidth = 1005/2
-            self.boardHeight = 605/2
+            self.boardWidth = 1005
+            self.boardHeight = 605
             self.boardArrayX = 50
             self.boardArrayY = 30
-            self.boardLeftPadding = 160
-            self.boardTopPadding = 85
-
-            #La distance entre chaque board
-            self.boardDistanceX = 540
-            self.boardDistanceY = 340
+            self.boardLeftPadding = 220
+            self.boardTopPadding = 160
+            
 
             self.displayedinfoX = 1245
 
             self.highScoreType = "small_board_ai"
         else:
-            self.boardWidth = 1205/2
-            self.boardHeight = 805/2
+            self.boardWidth = 1205
+            self.boardHeight = 805
             self.boardArrayX = 60
             self.boardArrayY = 40
-            self.boardLeftPadding = 40
-            self.boardTopPadding = 65
-
-            #La distance entre chaque board
-            self.boardDistanceX = 640
-            self.boardDistanceY = 440
-
+            self.boardLeftPadding = 210
+            self.boardTopPadding = 60
+            
             self.displayedinfoX = 1300
 
             self.highScoreType = "large_board_ai"
@@ -88,10 +78,7 @@ class Simulation:
 
         self.window.fill((0,0,0))
 
-        gameBoard1 = pygame.draw.rect(self.window, (0,255,0), (self.boardLeftPadding - 10, self.boardTopPadding - 10, self.boardWidth, self.boardHeight), 2)
-        gameBoard2 = pygame.draw.rect(self.window, (0,255,0), (self.boardLeftPadding + self.boardDistanceX, self.boardTopPadding - 10, self.boardWidth, self.boardHeight), 2)
-        gameBoard3 = pygame.draw.rect(self.window, (0,255,0), (self.boardLeftPadding - 10, self.boardTopPadding + self.boardDistanceY, self.boardWidth, self.boardHeight), 2)
-        gameBoard4 = pygame.draw.rect(self.window, (0,255,0), (self.boardLeftPadding + self.boardDistanceX, self.boardTopPadding + self.boardDistanceY, self.boardWidth, self.boardHeight), 2)
+        self.simulaionSurface = pygame.draw.rect(self.window, (0,255,0), (self.boardLeftPadding, self.boardTopPadding, self.boardWidth, self.boardHeight), 2)
 
         font = pygame.font.SysFont("arial", 28)
         scoreText = font.render("Score: " + str(self.score), 1, (0,255,0))
@@ -101,22 +88,22 @@ class Simulation:
         self.window.blit(highscoreText, (375,1025))
 
         agentRewardText = font.render("Cur. Reward: " + str(round(self.agentCurrentScore,2)), 1, (0,255,0))
-        self.window.blit(agentRewardText, (self.displayedinfoX,75))
+        self.window.blit(agentRewardText, (self.displayedinfoX,175))
 
         agentAvgRewardText = font.render("Avg. Reward: " + str(round(self.avgScore,2)), 1, (0,255,0))
-        self.window.blit(agentAvgRewardText, (self.displayedinfoX,150))
+        self.window.blit(agentAvgRewardText, (self.displayedinfoX,250))
 
         episodeText = font.render("Episode:   " + str(self.episodes) + "/" + str(self.numberOfEpisodes), 1, (0,255,0))
-        self.window.blit(episodeText, (self.displayedinfoX,225))
+        self.window.blit(episodeText, (self.displayedinfoX,325))
 
-        stepsText = font.render("Steps:   " + str(self.steps) + "/", str(self.maxSteps), 1, (0,255,0))
-        self.window.blit(stepsText, (self.displayedinfoX,300))
+        stepsText = font.render("Steps:   " + str(self.steps) + "/3000", 1, (0,255,0))
+        self.window.blit(stepsText, (self.displayedinfoX,400))
 
         epsilonText = font.render("Epsilon: " + str(round(self.epsilon,2)), 1, (0,255,0))
-        self.window.blit(epsilonText, (self.displayedinfoX,375))
+        self.window.blit(epsilonText, (self.displayedinfoX,475))
 
         episodeTimeText = font.render("Episode time (sec):", 1, (0,255,0))
-        self.window.blit(episodeTimeText, (self.displayedinfoX,450))
+        self.window.blit(episodeTimeText, (self.displayedinfoX,550))
 
 
         self.startButton = Button(75,225, buttonX, buttonY, (0,255,0), "Start")
@@ -153,7 +140,7 @@ class Simulation:
             self.episodes = episode
             score = 0
             isDone = False
-            self.board1 = Board(self,self.boardArrayX, self.boardArrayY, self.boardLeftPadding, self.boardTopPadding, 8)
+            self.board = Board(self,self.boardArrayX, self.boardArrayY, self.boardLeftPadding, self.boardTopPadding, 18)
             state = self.getState(0)
             for steps in range(self.maxSteps):
                 
@@ -178,7 +165,7 @@ class Simulation:
                 score += reward
                 self.steps = steps
                 self.agentCurrentScore = score
-                self.board1.tic()
+                self.board.tic()
                 pygame.display.update()
                 self.steps = steps
                 self.showSimulation()
@@ -190,7 +177,7 @@ class Simulation:
             scoreWindow.append(score)
             eps.append(epsilon)
             avgScore = np.mean(scoreWindow[-100:])
-            print("Iteration: ", self.i," episode: ", episode, "  score %.2f " % score, "  average score %.2f:" % avgScore, "  epsilon %.2f" % epsilon)
+            print("episode: ", episode, "  score %.2f " % score, "  average score %.2f:" % avgScore, "  epsilon %.2f" % epsilon)
             epsilon = max(epsilonMin, epsilonDecr * epsilon)
             self.avgScore = avgScore
             self.epsilon = epsilon
@@ -209,28 +196,29 @@ class Simulation:
 
 
     def createBoards(self):
-        self.board1 = Board(self,self.boardArrayX, self.boardArrayY, self.boardLeftPadding, self.boardTopPadding, 8)
-        self.board2 = Board(self,self.boardArrayX, self.boardArrayY, self.boardLeftPadding + self.boardDistanceX + 10, self.boardTopPadding, 8)
-        self.board3 = Board(self,self.boardArrayX, self.boardArrayY, self.boardLeftPadding, self.boardTopPadding + self.boardDistanceY + 10, 8)
-        self.board4 = Board(self,self.boardArrayX, self.boardArrayY, self.boardLeftPadding + self.boardDistanceX + 10, self.boardTopPadding + self.boardDistanceY + 10, 8)
+        self.board = Board(self,self.boardArrayX, self.boardArrayY, self.boardLeftPadding, self.boardTopPadding, 18)
+        
 
 
     def getState(self, appleEaten):
-        #vision = self.getSnakeVision()
-        #vision = vision.astype('float32')
-        #return vision
 
-        left, right, up, down = self.getSnakeVision()
+        left, right, up, down, topLeft, topRight, bottomLeft, bottomRight = self.getSnakeVision()
 
         state = []
-        state.append(self.board1.snake.body.deque[0].x)
-        state.append(self.board1.snake.body.deque[0].y)
-        state.append(self.board1.apple.x)
-        state.append(self.board1.apple.y)
+        state.append(self.board.snake.body.deque[0].x)
+        state.append(self.board.snake.body.deque[0].y)
+        state.append(self.board.apple.x)
+        state.append(self.board.apple.y)
         state.append(left)
         state.append(right)
         state.append(up)
         state.append(down)
+        state.append(topLeft)
+        state.append(topRight)
+        state.append(bottomLeft)
+        state.append(bottomRight)
+
+
         state = np.array(state)
 
         return state
@@ -240,11 +228,11 @@ class Simulation:
         isDone = False
         apple = False
        
-        appleX = self.board1.apple.x
-        appleY = self.board1.apple.y
+        appleX = self.board.apple.x
+        appleY = self.board.apple.y
 
-        headX = self.board1.snake.body.deque[0].x
-        headY = self.board1.snake.body.deque[0].y
+        headX = self.board.snake.body.deque[0].x
+        headY = self.board.snake.body.deque[0].y
 
         temp = 0
 
@@ -256,13 +244,13 @@ class Simulation:
 
 
         if action == 0:
-            self.board1.snake.snakeController.changeDirection("up")
+            self.board.snake.snakeController.changeDirection("up")
         elif action == 1:
-            self.board1.snake.snakeController.changeDirection("down")
+            self.board.snake.snakeController.changeDirection("down")
         elif action == 2:
-            self.board1.snake.snakeController.changeDirection("left")
+            self.board.snake.snakeController.changeDirection("left")
         elif action == 3:
-            self.board1.snake.snakeController.changeDirection("right")
+            self.board.snake.snakeController.changeDirection("right")
 
        
         if temp < self.distance:
@@ -277,7 +265,7 @@ class Simulation:
             self.scoreCheck = self.score
             apple = True
 
-        if self.board1.isGameOver:
+        if self.board.isGameOver:
             reward -= 50
             isDone = True
             self.timeAlive = 0
@@ -287,56 +275,146 @@ class Simulation:
 
 
     def getSnakeVision(self):
-        headX = self.board1.snake.body.deque[0].x
-        headY = self.board1.snake.body.deque[0].y
-        boardArray = self.board1.boardArray
-        snakeDirection = self.board1.snake.currentDirection
+        headX = self.board.snake.body.deque[0].x
+        headY = self.board.snake.body.deque[0].y
+        boardArray = self.board.boardArray
+        boardArrayX = self.boardArrayX - 1
+        boardArrayY = self.boardArrayY - 1
         leftObstacle = 0
         rightObstacle = 0
         upObstacle = 0
         downObstacle = 0
-        
-        vision = np.full((9, 9),'1')
-        rowIncr = -5
+        topLeftObstacle = 0
+        topRightObstacle = 0
+        bottomLeftObstacle = 0
+        bottomRightObstacle = 0
 
-        #for i in range(9):
-        #    rowIncr += 1
-        #    columnIncr = -4
-        #    for j in range(9):
-        #        try:
-        #            if headX + columnIncr >= 0 and headY + rowIncr >= 0:
-        #                vision[i][j] = boardArray[int(headX + columnIncr)][int(headY + rowIncr)]
-        #            else:
-        #                vision[i][j] = "5"
-        #        except:
-        #            vision[i][j] = "5"
-        #        columnIncr += 1
         try:
-            if boardArray[int(headX - 1)][int(headY)] != "1":
-                leftObstacle = 1
-                
-            else:
-                leftObstacle = 0
+            i = 1
+            while True:
+                if boardArray[int(headX - i)][int(headY)] != "1" and boardArray[int(headX - i)][int(headY)] != "4" or int(headX - i) < 0:
+                    if headX == 0:
+                        leftObstacle = 1
+                        break
+                    else:
+                        leftObstacle = i
+                        break    
+                else:
+                    i += 1
 
-            if boardArray[int(headX + 1)][int(headY)] != "1":
-                rightObstacle = 1
-                
-            else:
-                rightObstacle = 0
+            i = 1
+            while True:
+                try:      
+                    if boardArray[int(headX + i)][int(headY)] != "1" and boardArray[int(headX + i)][int(headY)] != "4":
+                        rightObstacle = i
+                        break
+                    elif int(headX + i) == boardArrayX:
+                        rightObstacle = i + 1
+                        break
+                    else:
+                        i += 1
+                except:
+                    rightObstacle = 1
+                    break
 
-            if boardArray[int(headX)][int(headY - 1)] != "1":
-                upObstacle = 1
-                
-            else:
-                upObstacle = 0
+            i = 1
+            while True:
+                try:      
+                    if boardArray[int(headX)][int(headY + i)] != "1" and boardArray[int(headX)][int(headY + i)] != "4":
+                        downObstacle = i
+                        break
+                    elif int(headY + i) == boardArrayY:
+                        downObstacle = i + 1
+                        break
+                    else:
+                        i += 1
+                except:
+                    downObstacle = 1
+                    break
 
-            if boardArray[int(headX)][int(headY + 1)] != "1":
-                downObstacle = 1
-                
-            else:
-                downObstacle = 0
 
+            i = 1
+            while True:
+                if boardArray[int(headX)][int(headY - i)] != "1" and boardArray[int(headX)][int(headY - i)] != "4" or int(headY - i) < 0:
+                    if headY == 0:
+                        upObstacle = 1
+                        break
+                    else:
+                        upObstacle = i
+                        break    
+                else:
+                    i += 1
+
+            i = 1
+            while True:
+
+                if boardArray[int(headX - i)][int(headY - i)] != "1" and boardArray[int(headX - i)][int(headY -i)] != "4" or int(headX - i) < 0 or int(headY - i) < 0:
+                    if headY == 0:
+                        topLeftObstacle = 1
+                        break
+                    elif headX == 0:
+                        topLeftObstacle = 1
+                        break
+                    else:
+                        topLeftObstacle = i
+                        break
+                else:
+                    i += 1
+
+            i = 1
+            while True:
+                try:      
+                    if boardArray[int(headX + i)][int(headY - i)] != "1" and boardArray[int(headX + i)][int(headY - i)] != "4":
+                        topRightObstacle = i
+                        break
+                    elif int(headX + i) == boardArrayX:
+                        topRightObstacle = i + 1
+                        break
+                    elif int(headY - i) < 0:
+                        topRightObstacle = i
+                        break
+                    else:
+                        i += 1
+                except:
+                    topRightObstacle = 1
+                    break
+
+            i = 1
+            while True:
+                try:      
+                    if boardArray[int(headX - i)][int(headY + i)] != "1" and boardArray[int(headX - i)][int(headY + i)] != "4":
+                        bottomLeftObstacle = i
+                        break
+                    elif int(headY + i) == boardArrayY:
+                        bottomLeftObstacle = i + 1
+                        break
+                    elif int(headX - i) < 0:
+                        bottomLeftObstacle = i
+                        break
+                    else:
+                        i += 1
+                except:
+                    bottomLeftObstacle = 1
+                    break
+
+            i = 1
+            while True:
+                try:      
+                    if boardArray[int(headX + i)][int(headY + i)] != "1" and boardArray[int(headX + i)][int(headY + i)] != "4":
+                        bottomRightObstacle = i
+                        break
+                    elif int(headY + i) == boardArrayY:
+                        bottomRightObstacle = i + 1
+                        break
+                    elif int(headX + i) == boardArrayX:
+                        bottomRightObstacle = i + 1
+                        break
+                    else:
+                        i += 1
+                except:
+                    bottomRightObstacle = 1
+                    break
         except:
             pass
-       
-        return leftObstacle, rightObstacle, upObstacle, downObstacle
+        
+        return leftObstacle, rightObstacle, upObstacle, downObstacle, topLeftObstacle, topRightObstacle, bottomLeftObstacle, bottomRightObstacle

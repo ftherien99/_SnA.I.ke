@@ -55,7 +55,6 @@ class Game:
 
         self.window.fill((0,0,0))
 
-        pygame.display.set_caption("S N A. I. K E")
 
         self.gameSurface = pygame.draw.rect(self.window, (0,255,0), (self.boardLeftPadding, self.boardTopPadding, self.boardWidth, self.boardHeight), 2)
 
@@ -107,6 +106,7 @@ class Game:
 
      
         if self.board.isGameOver == False:
+            a,b,c,d,e,f,g,h = self.getSnakeVision()
             self.board.tic()
  
 
@@ -130,3 +130,148 @@ class Game:
 
     def createBoard(self):
         self.board = Board(self,self.boardArrayX, self.boardArrayY, self.boardLeftPadding, self.boardTopPadding, 18)
+
+
+    def getSnakeVision(self):
+        headX = self.board.snake.body.deque[0].x
+        headY = self.board.snake.body.deque[0].y
+        boardArray = self.board.boardArray
+        boardArrayX = self.boardArrayX - 1
+        boardArrayY = self.boardArrayY - 1
+        leftObstacle = 0
+        rightObstacle = 0
+        upObstacle = 0
+        downObstacle = 0
+        topLeftObstacle = 0
+        topRightObstacle = 0
+        bottomLeftObstacle = 0
+        bottomRightObstacle = 0
+
+        
+        i = 1
+        while True:
+            if boardArray[int(headX - i)][int(headY)] != "1" and boardArray[int(headX - i)][int(headY)] != "4" or int(headX - i) < 0:
+                if headX == 0:
+                    leftObstacle = 1
+                    break
+                else:
+                    leftObstacle = i
+                    break    
+            else:
+                i += 1
+
+        i = 1
+        while True:
+            try:      
+                if boardArray[int(headX + i)][int(headY)] != "1" and boardArray[int(headX + i)][int(headY)] != "4":
+                    rightObstacle = i
+                    break
+                elif int(headX + i) == boardArrayX:
+                    rightObstacle = i + 1
+                    break
+                else:
+                    i += 1
+            except:
+                rightObstacle = 1
+                break
+
+        i = 1
+        while True:
+            try:      
+                if boardArray[int(headX)][int(headY + i)] != "1":
+                    downObstacle = i
+                    break
+                elif int(headY + i) == boardArrayY:
+                    downObstacle = i + 1
+                    break
+                else:
+                    i += 1
+            except:
+                downObstacle = 1
+                break
+
+
+        i = 1
+        while True:
+            if boardArray[int(headX)][int(headY - i)] != "1" or int(headY - i) < 0:
+                if headY == 0:
+                    upObstacle = 1
+                    break
+                else:
+                    upObstacle = i
+                    break    
+            else:
+                i += 1
+
+        i = 1
+        while True:
+
+            if boardArray[int(headX - i)][int(headY - i)] != "1" or int(headX - i) < 0 or int(headY - i) < 0:
+                if headY == 0:
+                    topLeftObstacle = 1
+                    break
+                elif headX == 0:
+                    topLeftObstacle = 1
+                    break
+                else:
+                    topLeftObstacle = i
+                    break
+            else:
+                i += 1
+
+        i = 1
+        while True:
+            try:      
+                if boardArray[int(headX + i)][int(headY - i)] != "1":
+                    topRightObstacle = i
+                    break
+                elif int(headX + i) == boardArrayX:
+                    topRightObstacle = i + 1
+                    break
+                elif int(headY - i) < 0:
+                    topRightObstacle = i
+                    break
+                else:
+                    i += 1
+            except:
+                topRightObstacle = 1
+                break
+
+        i = 1
+        while True:
+            try:      
+                if boardArray[int(headX - i)][int(headY + i)] != "1":
+                    bottomLeftObstacle = i
+                    break
+                elif int(headY + i) == boardArrayY:
+                    bottomLeftObstacle = i + 1
+                    break
+                elif int(headX - i) < 0:
+                    bottomLeftObstacle = i
+                    break
+                else:
+                    i += 1
+            except:
+                bottomLeftObstacle = 1
+                break
+
+        i = 1
+        while True:
+            try:      
+                if boardArray[int(headX + i)][int(headY + i)] != "1":
+                    bottomRightObstacle = i
+                    break
+                elif int(headY + i) == boardArrayY:
+                    bottomRightObstacle = i + 1
+                    break
+                elif int(headX + i) == boardArrayX:
+                    bottomRightObstacle = i + 1
+                    break
+                else:
+                    i += 1
+            except:
+                bottomRightObstacle = 1
+                break
+
+        print(rightObstacle)
+        return leftObstacle, rightObstacle, upObstacle, downObstacle, topLeftObstacle, topRightObstacle, bottomLeftObstacle, bottomRightObstacle
