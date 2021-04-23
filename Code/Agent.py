@@ -30,11 +30,16 @@ class Agent:
             self.qNetworkLocal = QNetwork(self.inputDims, self.numberOfActions, seed,64,64).to(self.device)
             self.qNetworkLocal.load_state_dict(torch.load("qNetwork.pth"))
             self.qNetworkLocal.eval()
+
+            self.qNetworkTarget = QNetwork(self.inputDims, self.numberOfActions, seed, 64,64).to(self.device)
+            self.qNetworkTarget.load_state_dict(torch.load("qNetwork.pth"))
+            self.qNetworkTarget.eval()
         else:
             self.qNetworkLocal = QNetwork(self.inputDims, self.numberOfActions, seed,64,64).to(self.device)
+            self.qNetworkTarget = QNetwork(self.inputDims, self.numberOfActions, seed, 64,64).to(self.device)
 
 
-        self.qNetworkTarget = QNetwork(self.inputDims, self.numberOfActions, seed, 64,64).to(self.device)
+        
         self.optimizer = optim.Adam(self.qNetworkLocal.parameters(), self.learningRate)
 
         self.agentMemory = ReplayBuffer(self.numberOfActions, self.bufferSize, self.batchSize, seed)
