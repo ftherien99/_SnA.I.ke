@@ -104,10 +104,6 @@ class Main:
                 self.snakeDAO.dbCloseConnection()
                 self.running = False
 
-        
-        
-        
-
     
     def setGameConfig(self):
 

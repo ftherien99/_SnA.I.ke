@@ -111,6 +111,56 @@ class SnakeDAO(DAO):
             print("Failed to save episode")
 
 
+    def getEpisodes(self):
+        query = "SELECT episode_number FROM episodes"
+        self.cursor.execute(query)
+        records = self.cursor.fetchall()
+        episodes = []
+        for row in records:
+            episodes.append(row)
+
+        return episodes
+
+    def getEpisodeSteps(self):
+        query = "SELECT number_of_steps FROM episodes"
+        self.cursor.execute(query)
+        records = self.cursor.fetchall()
+        steps = []
+        for row in records:
+            steps.append(row)
+
+        return steps
+
+    def getEpisodeTime(self):
+        query = "SELECT episode_time_sec FROM episodes"
+        self.cursor.execute(query)
+        records = self.cursor.fetchall()
+        time = []
+        for row in records:
+            time.append(row)
+
+        return time
+
+    def getEpisodeScore(self):
+        query = "SELECT episode_score FROM episodes"
+        self.cursor.execute(query)
+        records = self.cursor.fetchall()
+        scores = []
+        for row in records:
+            scores.append(row)
+
+        return scores
+
+    def getEpisodeReward(self):
+        query = "SELECT episode_reward FROM episodes"
+        self.cursor.execute(query)
+        records = self.cursor.fetchall()
+        rewards = []
+        for row in records:
+            rewards.append(row)
+
+        return rewards
+
 
     def createTables(self):
         try:

@@ -1,13 +1,14 @@
 import pygame
 from Button import Button
 from SnakeDAO import SnakeDAO
+from bokeh.plotting import figure,output_file, show
 
 class Graph:
     def __init__(self, main):
         self.main = main
-        self.snakeDAO = SnakeDAO()
         self.graphWindow = self.main.menuWindow
         self.showGraphWindow()
+        self.currentGraph = "episodeScore"
 
     def showGraphWindow(self):
 
@@ -20,8 +21,8 @@ class Graph:
         text = font.render("Graphs", 1, (0,255,0))
         self.graphWindow.blit(text, (700,75))
         
-        episodePointButton = Button(75,225, buttonX, buttonY, (0,255,0), "Points/Episode")
-        episodePointButton.drawButton(self.graphWindow)
+        episodeScoreButton = Button(75,225, buttonX, buttonY, (0,255,0), "Points/Episode")
+        episodeScoreButton.drawButton(self.graphWindow)
 
         episodeRewardButton = Button(75,225, buttonX + 300, buttonY, (0,255,0), "Reward/Episode")
         episodeRewardButton.drawButton(self.graphWindow)
@@ -56,3 +57,29 @@ class Graph:
             if quitButton.clicked(mousePos): 
                 self.main.currentMenu = "MainMenu"
             
+            elif episodeScoreButton.clicked(mousePos):
+                self.currentGraph = "episodeScore"
+            elif episodeRewardButton.clicked(mousePos):
+                self.currentGraph = "episodeReward"
+            elif episodeStepsButton.clicked(mousePos):
+                self.currentGraph = "episodeStep"
+            elif episodeTimeButton.clicked(mousePos):
+                self.currentGraph = "episodeTime"
+
+            elif showButton.clicked(mousePos):
+                if self.currentGraph == "episodeScore":
+                    self.graphBuilder("Scores", "Scores/Episodes", "Score by episodes", self.main.snakeDAO.getEpisodes(), self.main.snakeDAO.getEpisodeScore())
+                elif self.currentGraph == "episodeReward":
+                    self.graphBuilder("Rewards", "Rewards/Episodes", "Rewards by epsiodes", self.main.snakeDAO.getEpisodes(), self.main.snakeDAO.getEpisodeReward())
+                elif self.currentGraph == "episodeStep":
+                    self.graphBuilder("Steps", "Steps/Episodes", "Steps by episodes", self.main.snakeDAO.getEpisodes(), self.main.snakeDAO.getEpisodeSteps())
+                elif self.currentGraph == "episodeTime":
+                    self.graphBuilder("Time(sec)", "Time(sec)/Episodes", "Time(sec) by episodes", self.main.snakeDAO.getEpisodes(), self.main.snakeDAO.getEpisodeTime())
+
+    
+    def graphBuilder(self, yLabel, graphTitle, legend, xValues, yValues):  #reference: https://docs.bokeh.org/en/latest/docs/first_steps/first_steps_1.html
+        output_file("snaikeGraph.html")
+
+        plot = figure(title = graphTitle, x_axis_label = "Episodes", y_axis_label = yLabel)
+        plot.line(xValues, yValues, legend_label = legend, line_width = 2)
+        show(plot)
