@@ -17,6 +17,8 @@ class SnakeDAO(DAO):
 
             self.cursor = self.connection.cursor()
 
+            self.createTables()
+
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
         finally:
@@ -53,6 +55,7 @@ class SnakeDAO(DAO):
 
     def saveHighscore(self,gameType, highscore):
         query = "UPDATE highscores SET " + gameType + " = %s WHERE id = 1"
+        print("save")
         try:
             self.cursor.execute(query,[highscore])
 
@@ -96,3 +99,78 @@ class SnakeDAO(DAO):
             self.connection.commit()
         except:
             print("Failed to save color data")
+
+
+    def saveEpisode(self, steps, time, score, reward):
+        query = "INSERT INTO episodes (number_of_steps, episode_time_sec, episode_score, episode_reward) VALUES (%s,%s,%s,%s)"
+
+        try:
+            self.cursor.execute(query,(steps,time,score,reward))
+            self.connection.commit()
+        except:
+            print("Failed to save episode")
+
+
+
+    def createTables(self):
+        try:
+            query = "SELECT * FROM highscores"
+            self.cursor.execute(query)
+            records = self.cursor.fetchall()
+        except :
+            self.connection.rollback()
+            print("Creating table highscores")
+            createQuery = """CREATE TABLE highscores(
+                            id SERIAL NOT NULL PRIMARY KEY,
+                            small_board_play       INTEGER,
+                            large_board_play       INTEGER,
+                            small_board_ai         INTEGER,
+                            large_board_ai         INTEGER)"""
+                          
+            insertQuery = """INSERT INTO highscores (small_board_play, large_board_play, small_board_ai, large_board_ai)
+                            VALUES (%s,%s,%s,%s)"""
+                          
+            
+           
+            self.cursor.execute(createQuery)
+            self.cursor.execute(insertQuery,(0,0,0,0))
+            self.connection.commit()
+
+
+        try:
+            query = "SELECT * FROM colors"
+            self.cursor.execute(query)
+            records = self.cursor.fetchall()
+        except:
+            self.connection.rollback()
+            print("Creating table colors")
+            createQuery = """CREATE TABLE colors(
+                                id SERIAL NOT NULL PRIMARY KEY,
+                                head_color       INTEGER,
+                                body_color       INTEGER,
+                                apple_color      INTEGER)"""
+                    
+            insertQuery =  """INSERT INTO colors (head_color, body_color, apple_color)
+                                VALUES (%s,%s,%s)"""
+                     
+            self.cursor.execute(createQuery)
+            self.cursor.execute(insertQuery,(0,0,0))
+            self.connection.commit()
+
+
+        try:
+            query = "SELECT * FROM episodes"
+            self.cursor.execute(query)
+            records = self.cursor.fetchall()
+        except:
+            self.connection.rollback()
+            print("Creating table episodes")
+            createQuery = """CREATE TABLE episodes(
+                                episode_number SERIAL NOT NULL PRIMARY KEY,
+                                number_of_steps                    INTEGER,
+                                episode_time_sec                   INTEGER,
+                                episode_score                      INTEGER,
+                                episode_reward                     NUMERIC(6,2))"""
+                     
+            self.cursor.execute(createQuery)
+            self.connection.commit()

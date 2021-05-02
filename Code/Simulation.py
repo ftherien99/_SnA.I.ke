@@ -32,11 +32,11 @@ class Simulation:
         self.agentCurrentScore = 0
         self.avgScore = 0
         self.episodes = 0
-        self.epsilon = 0
+        self.epsilon = 0.9
         self.steps = 0
-        self.maxSteps = 3000
-             
-
+        self.maxSteps = 5000
+        self.timer = 0
+        
         if self.boardSize == "small":
             self.boardWidth = 1005
             self.boardHeight = 605
@@ -80,6 +80,9 @@ class Simulation:
 
         self.simulaionSurface = pygame.draw.rect(self.window, (0,255,0), (self.boardLeftPadding, self.boardTopPadding, self.boardWidth, self.boardHeight), 2)
 
+        if self.score > self.highscore:    
+            self.highscore = self.score
+
         font = pygame.font.SysFont("arial", 28)
         scoreText = font.render("Score: " + str(self.score), 1, (0,255,0))
         self.window.blit(scoreText, (100,1025))
@@ -96,13 +99,13 @@ class Simulation:
         episodeText = font.render("Episode:   " + str(self.episodes) + "/" + str(self.numberOfEpisodes), 1, (0,255,0))
         self.window.blit(episodeText, (self.displayedinfoX,325))
 
-        stepsText = font.render("Steps:   " + str(self.steps) + "/3000", 1, (0,255,0))
+        stepsText = font.render("Steps:   " + str(self.steps) + "/" + str(self.maxSteps), 1, (0,255,0))
         self.window.blit(stepsText, (self.displayedinfoX,400))
 
         epsilonText = font.render("Epsilon: " + str(round(self.epsilon,2)), 1, (0,255,0))
         self.window.blit(epsilonText, (self.displayedinfoX,475))
 
-        episodeTimeText = font.render("Episode time (sec):", 1, (0,255,0))
+        episodeTimeText = font.render("Episode time (sec): " + str(round(self.timer,0)), 1, (0,255,0))
         self.window.blit(episodeTimeText, (self.displayedinfoX,550))
 
 
@@ -135,6 +138,7 @@ class Simulation:
         print(self.numberOfEpisodes)
 
         for episode in range(self.numberOfEpisodes):
+            start = time.time()
             self.score = 0
             self.scoreCheck = 0
             self.episodes = episode
@@ -169,8 +173,10 @@ class Simulation:
                 pygame.display.update()
                 self.steps = steps
                 self.showSimulation()
+                end = time.time()
+                self.timer = end - start
                 if isDone:
-                    self.score = 0
+                    self.main.snakeDAO.saveEpisode(steps, self.timer, self.score, score)
                     break
 
             episodeCounter += 1
@@ -181,6 +187,12 @@ class Simulation:
             epsilon = max(epsilonMin, epsilonDecr * epsilon)
             self.avgScore = avgScore
             self.epsilon = epsilon
+
+            if self.score > self.highscore:
+                self.main.snakeDAO.saveHighscore(self.highScoreType,self.score)
+                self.highscore = self.score
+            
+            self.score = 0
 
             if episodeCounter == 200:
                 torch.save(self.agent.qNetworkLocal.state_dict(), 'qNetwork.pth')
