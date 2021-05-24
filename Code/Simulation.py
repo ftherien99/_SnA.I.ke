@@ -23,7 +23,6 @@ class Simulation:
         self.board = None
         self.isNewHighscore = False
         self.isHighscoreSaved = False
-        self.agent = Agent(12, 4, 0)
         self.distance = None
         self.numberOfEpisodes = numberOfEpisodes
         self.startButton = None
@@ -45,6 +44,7 @@ class Simulation:
             self.boardArrayY = 30
             self.boardLeftPadding = 220
             self.boardTopPadding = 160
+            self.qNetworkPath = "smallQNetwork.pth"
             
 
             self.displayedinfoX = 1245
@@ -58,6 +58,7 @@ class Simulation:
             self.boardArrayY = 40
             self.boardLeftPadding = 210
             self.boardTopPadding = 60
+            self.qNetworkPath = "largeQNetwork.pth"
             
             self.displayedinfoX = 1300
 
@@ -65,6 +66,7 @@ class Simulation:
             self.episodeType = "large_episodes"
 
         self.highscore = self.main.snakeDAO.getHighscore(self.highScoreType)
+        self.agent = Agent(12, 4, 0, self.qNetworkPath)
 
         if self.highscore == None:
             self.highscore = 0
@@ -228,7 +230,7 @@ class Simulation:
             self.score = 0
 
             if episodeCounter == 200:
-                torch.save(self.agent.qNetworkLocal.state_dict(), 'qNetwork.pth')
+                torch.save(self.agent.qNetworkLocal.state_dict(), self.qNetworkPath)
                 print("Saving QNetwork")
                 episodeCounter = 0
             

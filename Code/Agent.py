@@ -9,7 +9,7 @@ from os import path
 
 class Agent:
 
-    def __init__(self,inputDims, numberOfActions, seed):
+    def __init__(self,inputDims, numberOfActions, seed, qNetworkPath):
         if torch.cuda.is_available:
             self.device = torch.device("cuda:0")
         else:
@@ -24,15 +24,18 @@ class Agent:
         self.inputDims = inputDims #state size = 4
         self.numberOfActions = numberOfActions
         self.seed = random.seed(seed)
+        self.qNetworkPath = qNetworkPath
 
-        if path.exists("qNetwork.pth"): #Va prendre le qNetowrk entraine
-            print("IM LEARNING FATHER")
+        
+
+        if path.exists(self.qNetworkPath): #Va prendre le qNetowrk entraine
+
             self.qNetworkLocal = QNetwork(self.inputDims, self.numberOfActions, seed,64,64).to(self.device)
-            self.qNetworkLocal.load_state_dict(torch.load("qNetwork.pth"))
+            self.qNetworkLocal.load_state_dict(torch.load(self.qNetworkPath))
             self.qNetworkLocal.eval()
 
             self.qNetworkTarget = QNetwork(self.inputDims, self.numberOfActions, seed, 64,64).to(self.device)
-            self.qNetworkTarget.load_state_dict(torch.load("qNetwork.pth"))
+            self.qNetworkTarget.load_state_dict(torch.load(self.qNetworkPath))
             self.qNetworkTarget.eval()
         else:
             self.qNetworkLocal = QNetwork(self.inputDims, self.numberOfActions, seed,64,64).to(self.device)
