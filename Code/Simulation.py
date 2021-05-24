@@ -56,11 +56,11 @@ class Simulation:
             self.boardHeight = 805
             self.boardArrayX = 60
             self.boardArrayY = 40
-            self.boardLeftPadding = 210
+            self.boardLeftPadding = 100
             self.boardTopPadding = 60
             self.qNetworkPath = "largeQNetwork.pth"
             
-            self.displayedinfoX = 1300
+            self.displayedinfoX = 1340
 
             self.highScoreType = "large_board_ai"
             self.episodeType = "large_episodes"
