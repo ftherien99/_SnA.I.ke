@@ -83,6 +83,7 @@ class Simulation:
 
         if self.score > self.highscore:    
             self.highscore = self.score
+            self.isNewHighscore = True
 
         font = pygame.font.SysFont("arial", 28)
         scoreText = font.render("Score: " + str(self.score), 1, (0,255,0))
@@ -218,9 +219,9 @@ class Simulation:
             self.avgScore = avgScore
             self.epsilon = epsilon
 
-            if self.score > self.highscore:
+            if self.isNewHighscore: 
                 self.main.snakeDAO.saveHighscore(self.highScoreType,self.score)
-                self.highscore = self.score
+                self.isNewHighscore = False
             
             self.score = 0
 
