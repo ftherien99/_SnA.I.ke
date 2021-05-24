@@ -138,8 +138,8 @@ class Simulation:
 
 
        
-    def deepQLearning(self):
-        scoreWindow, eps = [], []
+    def deepQLearning(self): #INSPIRATIONS: Test.py dans la section References/DQL exemple dans le git
+        scoreWindow= []
         episodeCounter = 0
 
         for episode in range(self.numberOfEpisodes):
@@ -150,7 +150,7 @@ class Simulation:
             score = 0
             isDone = False
             self.board = Board(self,self.boardArrayX, self.boardArrayY, self.boardLeftPadding, self.boardTopPadding, 18)
-            state = self.getState(0)
+            state = self.getState()
             for steps in range(self.maxSteps):
                 
                                 
@@ -174,7 +174,7 @@ class Simulation:
                             self.isPaused = False
 
                 if self.isPaused:
-                    for i in range(6000):
+                    for i in range(100000):
                         time.sleep(0.1)
                         for event in pygame.event.get(): 
                             if event.type == pygame.QUIT:
@@ -236,7 +236,7 @@ class Simulation:
         
 
 
-    def getState(self, appleEaten):
+    def getState(self):
 
         left, right, up, down, topLeft, topRight, bottomLeft, bottomRight = self.getSnakeVision()
 
@@ -262,7 +262,6 @@ class Simulation:
     def simulationStep(self, action):
         reward = 0
         isDone = False
-        apple = False
        
         appleX = self.board.apple.x
         appleY = self.board.apple.y
@@ -299,7 +298,6 @@ class Simulation:
         if self.scoreCheck < self.score:
             reward += 30
             self.scoreCheck = self.score
-            apple = True
 
         if self.board.isGameOver:
             reward -= 50
@@ -307,7 +305,7 @@ class Simulation:
             self.timeAlive = 0
            
 
-        return self.getState(False), reward, isDone
+        return self.getState(), reward, isDone
 
 
     def getSnakeVision(self):

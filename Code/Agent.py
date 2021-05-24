@@ -7,6 +7,8 @@ import random
 import torch.optim as optim
 from os import path
 
+#INSPIRATIONS: https://youtu.be/wc-FxNENg9U et dqn_agent.py dans la section References/DQL exemple dans le git
+
 class Agent:
 
     def __init__(self,inputDims, numberOfActions, seed, qNetworkPath):

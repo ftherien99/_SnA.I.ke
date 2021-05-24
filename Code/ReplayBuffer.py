@@ -4,6 +4,8 @@ import numpy as np
 import torch
 import random 
 
+#INSPIRATIONS: dqn_agent.py dans la section References/DQL exemple dans le git
+
 class ReplayBuffer:
     def __init__(self,numberOfActions, bufferSize, batchSize, seed):
         self.numberOfActions = numberOfActions
