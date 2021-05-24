@@ -10,6 +10,7 @@ class Graph:
         self.graphWindow = self.main.menuWindow
         self.showGraphWindow()
         self.currentGraph = "episodeScore"
+        self.boardSize = "small_episodes"
 
     def showGraphWindow(self):
 
@@ -67,15 +68,21 @@ class Graph:
             elif episodeTimeButton.clicked(mousePos):
                 self.currentGraph = "episodeTime"
 
+            elif smallButton.clicked(mousePos):
+                self.boardSize = "small_episodes"
+            elif largeButton.clicked(mousePos):
+                self.boardSize = "large_episodes"
+
+
             elif showButton.clicked(mousePos):
                 if self.currentGraph == "episodeScore":
-                    self.graphBuilder("Scores", "Scores/Episodes", "Score by episodes", self.main.snakeDAO.getEpisodes(), self.main.snakeDAO.getEpisodeScore())
+                    self.graphBuilder("Scores", "Scores/Episodes", "Score by episodes", self.main.snakeDAO.getEpisodes(self.boardSize), self.main.snakeDAO.getEpisodeScore(self.boardSize))
                 elif self.currentGraph == "episodeReward":
-                    self.graphBuilder("Rewards", "Rewards/Episodes", "Rewards by epsiodes", self.main.snakeDAO.getEpisodes(), self.main.snakeDAO.getEpisodeReward())
+                    self.graphBuilder("Rewards", "Rewards/Episodes", "Rewards by epsiodes", self.main.snakeDAO.getEpisodes(self.boardSize), self.main.snakeDAO.getEpisodeReward(self.boardSize))
                 elif self.currentGraph == "episodeStep":
-                    self.graphBuilder("Steps", "Steps/Episodes", "Steps by episodes", self.main.snakeDAO.getEpisodes(), self.main.snakeDAO.getEpisodeSteps())
+                    self.graphBuilder("Steps", "Steps/Episodes", "Steps by episodes", self.main.snakeDAO.getEpisodes(self.boardSize), self.main.snakeDAO.getEpisodeSteps(self.boardSize))
                 elif self.currentGraph == "episodeTime":
-                    self.graphBuilder("Time(sec)", "Time(sec)/Episodes", "Time(sec) by episodes", self.main.snakeDAO.getEpisodes(), self.main.snakeDAO.getEpisodeTime())
+                    self.graphBuilder("Time(sec)", "Time(sec)/Episodes", "Time(sec) by episodes", self.main.snakeDAO.getEpisodes(self.boardSize), self.main.snakeDAO.getEpisodeTime(self.boardSize))
 
     
     def graphBuilder(self, yLabel, graphTitle, legend, xValues, yValues):  #reference: https://docs.bokeh.org/en/latest/docs/first_steps/first_steps_1.html

@@ -101,8 +101,8 @@ class SnakeDAO(DAO):
             print("Failed to save color data")
 
 
-    def saveEpisode(self, steps, time, score, reward):
-        query = "INSERT INTO episodes (number_of_steps, episode_time_sec, episode_score, episode_reward) VALUES (%s,%s,%s,%s)"
+    def saveEpisode(self, boardSize, steps, time, score, reward):
+        query = "INSERT INTO " + boardSize + " (number_of_steps, episode_time_sec, episode_score, episode_reward) VALUES (%s,%s,%s,%s)"
 
         try:
             self.cursor.execute(query,(steps,time,score,reward))
@@ -111,8 +111,8 @@ class SnakeDAO(DAO):
             print("Failed to save episode")
 
 
-    def getEpisodes(self):
-        query = "SELECT episode_number FROM episodes"
+    def getEpisodes(self, boardSize):
+        query = "SELECT episode_number FROM " + boardSize
         self.cursor.execute(query)
         records = self.cursor.fetchall()
         episodes = []
@@ -121,8 +121,8 @@ class SnakeDAO(DAO):
 
         return episodes
 
-    def getEpisodeSteps(self):
-        query = "SELECT number_of_steps FROM episodes"
+    def getEpisodeSteps(self, boardSize):
+        query = "SELECT number_of_steps FROM " + boardSize
         self.cursor.execute(query)
         records = self.cursor.fetchall()
         steps = []
@@ -131,8 +131,8 @@ class SnakeDAO(DAO):
 
         return steps
 
-    def getEpisodeTime(self):
-        query = "SELECT episode_time_sec FROM episodes"
+    def getEpisodeTime(self, boardSize):
+        query = "SELECT episode_time_sec FROM " + boardSize
         self.cursor.execute(query)
         records = self.cursor.fetchall()
         time = []
@@ -141,8 +141,8 @@ class SnakeDAO(DAO):
 
         return time
 
-    def getEpisodeScore(self):
-        query = "SELECT episode_score FROM episodes"
+    def getEpisodeScore(self, boardSize):
+        query = "SELECT episode_score FROM " + boardSize
         self.cursor.execute(query)
         records = self.cursor.fetchall()
         scores = []
@@ -151,8 +151,8 @@ class SnakeDAO(DAO):
 
         return scores
 
-    def getEpisodeReward(self):
-        query = "SELECT episode_reward FROM episodes"
+    def getEpisodeReward(self, boardSize):
+        query = "SELECT episode_reward FROM " + boardSize
         self.cursor.execute(query)
         records = self.cursor.fetchall()
         rewards = []
@@ -209,13 +209,30 @@ class SnakeDAO(DAO):
 
 
         try:
-            query = "SELECT * FROM episodes"
+            query = "SELECT * FROM small_episodes"
             self.cursor.execute(query)
             records = self.cursor.fetchall()
         except:
             self.connection.rollback()
-            print("Creating table episodes")
-            createQuery = """CREATE TABLE episodes(
+            print("Creating table small_episodes")
+            createQuery = """CREATE TABLE small_episodes(
+                                episode_number SERIAL NOT NULL PRIMARY KEY,
+                                number_of_steps                    INTEGER,
+                                episode_time_sec                   INTEGER,
+                                episode_score                      INTEGER,
+                                episode_reward                     NUMERIC(6,2))"""
+                     
+            self.cursor.execute(createQuery)
+            self.connection.commit()
+
+        try:
+            query = "SELECT * FROM large_episodes"
+            self.cursor.execute(query)
+            records = self.cursor.fetchall()
+        except:
+            self.connection.rollback()
+            print("Creating table large_episodes")
+            createQuery = """CREATE TABLE large_episodes(
                                 episode_number SERIAL NOT NULL PRIMARY KEY,
                                 number_of_steps                    INTEGER,
                                 episode_time_sec                   INTEGER,

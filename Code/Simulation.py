@@ -50,6 +50,7 @@ class Simulation:
             self.displayedinfoX = 1245
 
             self.highScoreType = "small_board_ai"
+            self.episodeType = "small_episodes"
         else:
             self.boardWidth = 1205
             self.boardHeight = 805
@@ -61,6 +62,7 @@ class Simulation:
             self.displayedinfoX = 1300
 
             self.highScoreType = "large_board_ai"
+            self.episodeType = "large_episodes"
 
         self.highscore = self.main.snakeDAO.getHighscore(self.highScoreType)
 
@@ -207,7 +209,7 @@ class Simulation:
                 end = time.time()
                 self.timer = end - start
                 if isDone:
-                    self.main.snakeDAO.saveEpisode(steps, self.timer, self.score, score)
+                    self.main.snakeDAO.saveEpisode(self.episodeType, steps, self.timer, self.score, score)
                     break
 
             episodeCounter += 1
