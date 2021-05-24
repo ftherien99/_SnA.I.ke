@@ -68,9 +68,6 @@ class Board:
             self.isGameOver = True
             
 
-
-
-
     def tic(self):
         try:
             
@@ -100,8 +97,7 @@ class Board:
                     elif self.boardArray[i][j] == "4":
                             pygame.draw.rect(self.window, self.game.appleColor, (posX, posY, self.squareSize, self.squareSize), 0)
 
-            #Gachette (faire le mouvement quand cumulTime devient plus grand que la vitesse, voir lignes 75 à6
-            #  79)
+            #Gachette (faire le mouvement quand cumulTime devient plus grand que la vitesse, voir lignes 75 à 79)
             if self.cumulTime > speed:
                 self.cumulTime -= speed
                 #Action

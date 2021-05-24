@@ -58,7 +58,6 @@ class Body:
 
         self.deque.append(newPoint)
         self.length += 1
-        print(self.deque[0].x, self.deque[0].y,self.deque[1].x,self.deque[1].y ,self.deque[2].x, self.deque[2].y)
         
     
         
@@ -70,7 +69,6 @@ class SnakeController:
 
     def changeDirection(self, direction):
         
-        #gachette
 
         if direction == "up" and self.snake.currentDirection != "down":
             self.snake.snakeYMovement = -1

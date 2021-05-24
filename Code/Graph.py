@@ -1,8 +1,6 @@
 import pygame
 from Button import Button
-from SnakeDAO import SnakeDAO
 from bokeh.plotting import figure,output_file, show
-from bokeh.models import Band
 
 class Graph:
     def __init__(self, main):

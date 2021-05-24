@@ -31,7 +31,6 @@ class Simulation:
         self.agentCurrentScore = 0
         self.avgScore = 0
         self.episodes = 0
-        self.epsilon = 0.9
         self.steps = 0
         self.maxSteps = 5000
         self.timer = 0
@@ -94,28 +93,25 @@ class Simulation:
         self.window.blit(scoreText, (100,1025))
 
         highscoreText = font.render("Highscore: " + str(self.highscore), 1, (0,255,0)) #va aller chercher la valeur dans la bd
-        self.window.blit(highscoreText, (375,1025))
+        self.window.blit(highscoreText, (375, 1025))
 
         agentRewardText = font.render("Cur. Reward: " + str(round(self.agentCurrentScore,2)), 1, (0,255,0))
-        self.window.blit(agentRewardText, (self.displayedinfoX,175))
+        self.window.blit(agentRewardText, (self.displayedinfoX, 175))
 
         agentAvgRewardText = font.render("Avg. Reward: " + str(round(self.avgScore,2)), 1, (0,255,0))
-        self.window.blit(agentAvgRewardText, (self.displayedinfoX,250))
+        self.window.blit(agentAvgRewardText, (self.displayedinfoX, 250))
 
         episodeText = font.render("Episode:   " + str(self.episodes) + "/" + str(self.numberOfEpisodes), 1, (0,255,0))
-        self.window.blit(episodeText, (self.displayedinfoX,325))
+        self.window.blit(episodeText, (self.displayedinfoX, 325))
 
         stepsText = font.render("Steps:   " + str(self.steps) + "/" + str(self.maxSteps), 1, (0,255,0))
-        self.window.blit(stepsText, (self.displayedinfoX,400))
-
-        epsilonText = font.render("Epsilon: " + str(round(self.epsilon,2)), 1, (0,255,0))
-        self.window.blit(epsilonText, (self.displayedinfoX,475))
+        self.window.blit(stepsText, (self.displayedinfoX, 400))
 
         episodeTimeText = font.render("Episode time (sec): " + str(round(self.timer,0)), 1, (0,255,0))
-        self.window.blit(episodeTimeText, (self.displayedinfoX,550))
+        self.window.blit(episodeTimeText, (self.displayedinfoX, 475))
 
 
-        self.startButton = Button(75,225, buttonX, buttonY, (0,255,0), "Start")
+        self.startButton = Button(75, 225, buttonX, buttonY, (0,255,0), "Start")
         self.startButton.drawButton(self.window)
 
         if self.isPaused == False:
@@ -144,11 +140,7 @@ class Simulation:
        
     def deepQLearning(self):
         scoreWindow, eps = [], []
-        epsilon = 0.9
-        epsilonMin = 0.01
-        epsilonDecr = 0.995
         episodeCounter = 0
-        print(self.numberOfEpisodes)
 
         for episode in range(self.numberOfEpisodes):
             start = time.time()
@@ -216,12 +208,9 @@ class Simulation:
 
             episodeCounter += 1
             scoreWindow.append(score)
-            eps.append(epsilon)
             avgScore = np.mean(scoreWindow[-100:])
-            print("episode: ", episode, "  score %.2f " % score, "  average score %.2f:" % avgScore, "  epsilon %.2f" % epsilon)
-            epsilon = max(epsilonMin, epsilonDecr * epsilon)
+           
             self.avgScore = avgScore
-            self.epsilon = epsilon
 
             if self.isNewHighscore: 
                 self.main.snakeDAO.saveHighscore(self.highScoreType,self.score)

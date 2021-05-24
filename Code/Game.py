@@ -7,7 +7,7 @@ import numpy as np
 
 
 class Game:
-    def __init__(self, main, headColor, bodyColor, appleColor, snakeSpeed, boardSize): #speed, boardSize
+    def __init__(self, main, headColor, bodyColor, appleColor, snakeSpeed, boardSize):
         self.fpsClock = pygame.time.Clock()
         self.main = main
         self.headColor = headColor

@@ -16,12 +16,12 @@ class Agent:
             self.device = torch.device("cpu")
 
         self.bufferSize = int(1e5)
-        self.batchSize = 64 ###
+        self.batchSize = 64
         self.gamma = 0.99
         self.tau = 1e-3
         self.learningRate = 5e-4 
         self.updateNetwork = 4
-        self.inputDims = inputDims #state size = 4
+        self.inputDims = inputDims #state size
         self.numberOfActions = numberOfActions
         self.seed = random.seed(seed)
         self.qNetworkPath = qNetworkPath
@@ -71,16 +71,10 @@ class Agent:
         with torch.no_grad():
             actionValues = self.qNetworkLocal.forward(state)
         self.qNetworkLocal.train()
-
-        if random.random() > epsilon: #Si on depasse epsilon, faire une action ''greedy'', sinon faire une action random
-            action =  np.argmax(actionValues.cpu().data.numpy())
+    
+        action =  np.argmax(actionValues.cpu().data.numpy())
             
-        else:
-            action = random.choice(np.arange(self.numberOfActions))
-            
-
         return action
-
 
 
     def learn(self, experiences, gamma):

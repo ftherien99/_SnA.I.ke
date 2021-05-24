@@ -37,16 +37,12 @@ class SnakeDAO(DAO):
 
             for row in records:
                 if gameType == "small_board_play":
-                    print(row[1])
                     return row[1]
                 elif gameType == "large_board_play":
-                    print(row[2])
                     return row[2]
                 elif gameType == "small_board_ai":
-                    print(row[3])
                     return row[3]
                 elif gameType == "large_board_ai":
-                    print(row[4])
                     return row[4]
            
         except:
@@ -55,11 +51,11 @@ class SnakeDAO(DAO):
 
     def saveHighscore(self,gameType, highscore):
         query = "UPDATE highscores SET " + gameType + " = %s WHERE id = 1"
-        print("save")
         try:
             self.cursor.execute(query,[highscore])
 
             self.connection.commit()
+            print("Saving highscore")
         except:
             print("Failed to save highscore data")
 
