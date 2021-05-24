@@ -13,14 +13,14 @@ class Graph:
 
     def showGraphWindow(self):
 
-        buttonX = 215
+        buttonX = 265
         buttonY = 175
         
         self.graphWindow.fill((0,0,0))
 
         font = pygame.font.SysFont("arial", 60)
         text = font.render("Graphs", 1, (0,255,0))
-        self.graphWindow.blit(text, (700,75))
+        self.graphWindow.blit(text, (750,75))
         
         episodeScoreButton = Button(75,225, buttonX, buttonY, (0,255,0), "Points/Episode")
         episodeScoreButton.drawButton(self.graphWindow)
@@ -35,7 +35,7 @@ class Graph:
         episodeStepsButton.drawButton(self.graphWindow)
 
         text = font.render("Board size", 1, (0,255,0))
-        self.graphWindow.blit(text, (665,350))
+        self.graphWindow.blit(text, (715,350))
 
         smallButton = Button(75,225, buttonX + 300, 450, (0,255,0), "Small")
         smallButton.drawButton(self.graphWindow)
@@ -44,9 +44,9 @@ class Graph:
         largeButton.drawButton(self.graphWindow)
 
         text = font.render("Confirm", 1, (0,255,0))
-        self.graphWindow.blit(text, (695,600))
+        self.graphWindow.blit(text, (735,600))
 
-        showButton = Button(75,225, 670, 700, (0,255,0), "Show Graph")
+        showButton = Button(75,225, buttonX + 440, 700, (0,255,0), "Show Graph")
         showButton.drawButton(self.graphWindow)
 
         quitButton = Button(75,225, 50, 900, (255,0,0), "Main Menu")

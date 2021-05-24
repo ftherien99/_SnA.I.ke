@@ -12,6 +12,7 @@ class Snake:
         self.snakeYMovement = 0
         self.snakeController = SnakeController(self)
         self.currentDirection = "left"
+        self.lastDirection = ""
 
 
 class Body:

@@ -83,7 +83,14 @@ class Game:
             mousePos = pygame.mouse.get_pos()
 
             if pauseButton.clicked(mousePos):
-                self.board.snake.snakeController.changeDirection("paused")
+                if self.board.snake.currentDirection != "paused":
+                    self.board.snake.lastDirection = self.board.snake.currentDirection
+                    self.board.snake.snakeController.changeDirection("paused")
+                    time.sleep(0.3)
+                else:
+                    self.board.snake.snakeController.changeDirection(self.board.snake.lastDirection)
+                    time.sleep(0.1)
+
             elif resetButton.clicked(mousePos):
                 self.createBoard()
                 self.score = 0
@@ -93,16 +100,20 @@ class Game:
                 self.main.currentMenu = "MainMenu"
 
         elif pygame.key.get_pressed()[pygame.K_w]:
-            self.board.snake.snakeController.changeDirection("up")
+            if self.board.snake.currentDirection != "paused":
+                self.board.snake.snakeController.changeDirection("up")
         
         elif pygame.key.get_pressed()[pygame.K_s]:
-            self.board.snake.snakeController.changeDirection("down")
+            if self.board.snake.currentDirection != "paused":
+                self.board.snake.snakeController.changeDirection("down")
 
         elif pygame.key.get_pressed()[pygame.K_a]:
-            self.board.snake.snakeController.changeDirection("left")
+            if self.board.snake.currentDirection != "paused":
+                self.board.snake.snakeController.changeDirection("left")
 
         elif pygame.key.get_pressed()[pygame.K_d]:
-            self.board.snake.snakeController.changeDirection("right")
+            if self.board.snake.currentDirection != "paused":
+                self.board.snake.snakeController.changeDirection("right")
 
      
         if self.board.isGameOver == False:
