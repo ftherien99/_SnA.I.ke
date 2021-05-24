@@ -2,6 +2,7 @@ import pygame
 from Button import Button
 from SnakeDAO import SnakeDAO
 from bokeh.plotting import figure,output_file, show
+from bokeh.models import Band
 
 class Graph:
     def __init__(self, main):
@@ -80,6 +81,7 @@ class Graph:
     def graphBuilder(self, yLabel, graphTitle, legend, xValues, yValues):  #reference: https://docs.bokeh.org/en/latest/docs/first_steps/first_steps_1.html
         output_file("snaikeGraph.html")
 
-        plot = figure(title = graphTitle, x_axis_label = "Episodes", y_axis_label = yLabel)
-        plot.line(xValues, yValues, legend_label = legend, line_width = 2)
+        plot = figure(title = graphTitle, x_axis_label = "Episodes", y_axis_label = yLabel, plot_width = 1500, plot_height=1500)
+        plot.line(xValues, yValues, legend_label = legend, line_width = 1)
+        plot.circle(xValues, yValues, size = 8)
         show(plot)

@@ -60,6 +60,8 @@ class Main:
                 self.currentSimulation.showSimulation()
             elif self.currentMenu == "Graph":
                 self.graphWindow.showGraphWindow()
+            elif self.currentMenu == "Paused":
+                self.currentSimulation.pausedGame()
             pygame.display.update()
                     
 

@@ -11,16 +11,10 @@ class QNetwork(nn.Module):
     def __init__(self, inputDims, numberOfActions, seed, layer1Dims, layer2Dims):
         super(QNetwork, self).__init__()
 
-        #INPUT DIMS = STATE
-        #inputDims[0] = posX
-        #inputDims[1] = posY
-        #inputDims[2] = bodyLength
-        #inputDims[4] = contact with apple (1 if yes, 0 if not)
-        ###7 rayons en avant du snake pour verifier la distance entre objets
         #NUMBER OF NEURONS
-        self.inputDims = inputDims #9
-        self.layer1Dims = layer1Dims #9
-        self.layer2Dims = layer2Dims #9
+        self.inputDims = inputDims 
+        self.layer1Dims = layer1Dims 
+        self.layer2Dims = layer2Dims 
 
         self.numberOfActions = numberOfActions
         
@@ -33,10 +27,6 @@ class QNetwork(nn.Module):
 
 
     def forward(self, state):
-        #print(state.shape)
-        #state = state.view(state.size(0),-1)
-        #print(state)
-        #print(state.shape)
         x = F.relu(self.layer1(state))
         x = F.relu(self.layer2(x))
         action = self.layer3(x)

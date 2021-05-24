@@ -27,7 +27,7 @@ class Simulation:
         self.distance = None
         self.numberOfEpisodes = numberOfEpisodes
         self.startButton = None
-        self.resetButton = None
+        self.pauseButton = None
         self.quitButton = None
         self.agentCurrentScore = 0
         self.avgScore = 0
@@ -36,6 +36,7 @@ class Simulation:
         self.steps = 0
         self.maxSteps = 5000
         self.timer = 0
+        self.isPaused = False
         
         if self.boardSize == "small":
             self.boardWidth = 1005
@@ -112,8 +113,12 @@ class Simulation:
         self.startButton = Button(75,225, buttonX, buttonY, (0,255,0), "Start")
         self.startButton.drawButton(self.window)
 
-        self.resetButton = Button(75,225, buttonX + 250, buttonY, (0,255,0), "Reset")
-        self.resetButton.drawButton(self.window)
+        if self.isPaused == False:
+            self.pauseButton = Button(75,225, buttonX + 250, buttonY, (0,255,0), "Pause")
+        else:
+            self.pauseButton = Button(75,225, buttonX + 250, buttonY, (0,255,0), "Resume")
+
+        self.pauseButton.drawButton(self.window)
 
         self.quitButton = Button(75,225, buttonX + 500, buttonY, (255,0,0), "Quit")
         self.quitButton.drawButton(self.window)
@@ -124,9 +129,12 @@ class Simulation:
 
             if self.startButton.clicked(mousePos):
                 self.deepQLearning()
+
            
             elif self.quitButton.clicked(mousePos):
                 self.main.currentMenu = "MainMenu"
+
+
 
        
     def deepQLearning(self):
@@ -148,6 +156,7 @@ class Simulation:
             state = self.getState(0)
             for steps in range(self.maxSteps):
                 
+                                
                 for event in pygame.event.get(): #si on clique sur le X
                     if event.type == pygame.QUIT:
                         self.main.snakeDAO.dbCloseConnection()
@@ -161,6 +170,27 @@ class Simulation:
                         self.main.currentMenu = "MainMenu"
                         break
 
+                    elif self.pauseButton.clicked(mousePos):
+                        if self.isPaused == False:
+                            self.isPaused = True
+                        else: 
+                            self.isPaused = False
+
+                if self.isPaused:
+                    for i in range(6000):
+                        time.sleep(0.1)
+                        for event in pygame.event.get(): 
+                            if event.type == pygame.QUIT:
+                                self.main.snakeDAO.dbCloseConnection()
+                                self.main.running = False
+                                exit()
+                           
+                        if pygame.mouse.get_pressed() == (1,0,0):
+                            mousePos = pygame.mouse.get_pos()
+                            if self.pauseButton.clicked(mousePos):
+                                self.isPaused = False
+                                time.sleep(0.5)
+                                break
                 
                 action = self.agent.act(state)
                 nextState, reward, isDone = self.simulationStep(action)
