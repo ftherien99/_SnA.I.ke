@@ -1,9 +1,8 @@
 import pygame
 from Button import Button
-from SnakeDAO import SnakeDAO
 from Board import Board
 import time
-import numpy as np
+
 
 
 class Game:

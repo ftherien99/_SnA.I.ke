@@ -1,6 +1,8 @@
 import pygame
 pygame.init()
 
+#RÉFÉRENCES: https://youtu.be/4_9twnEduFA
+
 class Button:
     def __init__(self, height, width, posX, posY, color, text):
         self.height = height

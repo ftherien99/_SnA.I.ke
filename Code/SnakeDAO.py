@@ -20,7 +20,10 @@ class SnakeDAO(DAO):
             self.createTables()
 
         except (Exception, psycopg2.DatabaseError) as error:
-            print(error)
+            print("Creating database...")
+            query = "CREATE database snake"
+            self.cursor.execute(query)
+            self.connection.commit()
         finally:
             if self.connection is not None:
                 print("Database connection established")

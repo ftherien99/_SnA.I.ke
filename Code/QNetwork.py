@@ -1,10 +1,8 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import torch.optim as optim
 
-#INSPIRATIONS: https://youtu.be/wc-FxNENg9U et model.py dans la section References/DQL exemple dans le git
-
+#RÉFÉRENCES: https://youtu.be/wc-FxNENg9U et model.py dans la section References/DQL exemple dans le git
 
 class QNetwork(nn.Module):
 

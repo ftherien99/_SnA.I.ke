@@ -1,9 +1,7 @@
 import pygame
 from Button import Button
-from SnakeDAO import SnakeDAO
 from Board import Board
 from Agent import Agent
-from collections import deque
 import numpy as np
 import torch
 import time
@@ -138,7 +136,7 @@ class Simulation:
 
 
        
-    def deepQLearning(self): #INSPIRATIONS: Test.py dans la section References/DQL exemple dans le git
+    def deepQLearning(self): #RÉFÉRENCES: Test.py dans la section References/DQL exemple dans le git
         scoreWindow= []
         episodeCounter = 0
 
@@ -174,7 +172,7 @@ class Simulation:
                             self.isPaused = False
 
                 if self.isPaused:
-                    for i in range(100000):
+                    for i in range(1000000):
                         time.sleep(0.1)
                         for event in pygame.event.get(): 
                             if event.type == pygame.QUIT:

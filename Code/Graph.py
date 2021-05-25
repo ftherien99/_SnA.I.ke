@@ -83,7 +83,7 @@ class Graph:
                     self.graphBuilder("Time(sec)", "Time(sec)/Episodes", "Time(sec) by episodes", self.main.snakeDAO.getEpisodes(self.boardSize), self.main.snakeDAO.getEpisodeTime(self.boardSize))
 
     
-    def graphBuilder(self, yLabel, graphTitle, legend, xValues, yValues):  #reference: https://docs.bokeh.org/en/latest/docs/first_steps/first_steps_1.html
+    def graphBuilder(self, yLabel, graphTitle, legend, xValues, yValues):  #RÉFÉRENCES: https://docs.bokeh.org/en/latest/docs/first_steps/first_steps_1.html
         output_file("snaikeGraph.html")
 
         plot = figure(title = graphTitle, x_axis_label = "Episodes", y_axis_label = yLabel, plot_width = 1500, plot_height=1500)
