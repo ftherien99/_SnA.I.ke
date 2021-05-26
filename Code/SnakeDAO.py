@@ -1,5 +1,7 @@
 import psycopg2
+
 from DAO import DAO
+
 
 class SnakeDAO(DAO):
     def __init__(self):

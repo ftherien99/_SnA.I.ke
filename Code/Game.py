@@ -1,8 +1,9 @@
-import pygame
-from Button import Button
-from Board import Board
 import time
 
+import pygame
+
+from Board import Board
+from Button import Button
 
 
 class Game:

@@ -1,6 +1,9 @@
-import pygame
 from collections import deque
+
+import pygame
+
 from Point import Point
+
 
 class Snake:
     def __init__(self, startPointX, startPointY):

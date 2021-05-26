@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 
+
 class DAO(ABC):
 
     @abstractmethod
@@ -24,4 +25,33 @@ class DAO(ABC):
 
     @abstractmethod
     def saveColors(self):
+        pass
+
+    @abstractmethod
+    def saveEpisode(self):
+        pass
+
+    @abstractmethod
+    def getEpisodes(self):
+        pass
+
+    @abstractmethod
+    def getEpisodeSteps(self):
+        pass
+
+    @abstractmethod
+    def getEpisodeTime(self):
+        pass
+
+    @abstractmethod
+    def getEpisodeScore(self):
+        pass
+
+
+    @abstractmethod
+    def getEpisodeReward(self):
+        pass
+
+    @abstractmethod
+    def createTables(self):
         pass

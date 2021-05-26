@@ -1,4 +1,5 @@
 import pygame
+
 pygame.init()
 
 #RÉFÉRENCES: https://youtu.be/4_9twnEduFA

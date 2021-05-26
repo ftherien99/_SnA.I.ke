@@ -9,7 +9,7 @@ class QNetwork(nn.Module):
     def __init__(self, inputDims, numberOfActions, seed, layer1Dims, layer2Dims):
         super(QNetwork, self).__init__()
 
-        #NUMBER OF NEURONS
+        #Nombre de neurones
         self.inputDims = inputDims 
         self.layer1Dims = layer1Dims 
         self.layer2Dims = layer2Dims 
@@ -17,7 +17,7 @@ class QNetwork(nn.Module):
         self.numberOfActions = numberOfActions
         
 
-        #LAYERS
+        #Couches
         self.seed = torch.manual_seed(seed)
         self.layer1 = nn.Linear(self.inputDims,self.layer1Dims)
         self.layer2 = nn.Linear(self.layer1Dims, self.layer2Dims)

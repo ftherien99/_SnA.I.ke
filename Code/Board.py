@@ -1,9 +1,12 @@
-import pygame
 import random
-import numpy as np
-from Snake import Snake
-from Apple import Apple
 import time
+
+import numpy as np
+import pygame
+
+from Apple import Apple
+from Snake import Snake
+
 
 class Board:
     def __init__(self, game, height, width,leftPadding, topPadding, squareSize):
@@ -25,7 +28,10 @@ class Board:
         self.updateBoardArray()
         self.addApple()
       
-        
+    #1 = espace vide
+    #2 = tete du serpent
+    #3 = corps du serpent
+    #4 = pomme    
 
     def addApple(self):
         while True:

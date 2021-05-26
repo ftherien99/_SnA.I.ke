@@ -1,8 +1,8 @@
-from collections import deque
-from collections import namedtuple
+import random
+from collections import deque, namedtuple
+
 import numpy as np
 import torch
-import random 
 
 #INSPIRATIONS: dqn_agent.py dans la section References/DQL exemple dans le git
 

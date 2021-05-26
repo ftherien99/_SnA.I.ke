@@ -1,11 +1,13 @@
-from QNetwork import QNetwork
-from ReplayBuffer import ReplayBuffer
+import random
+from os import path
+
+import numpy as np
 import torch
 import torch.nn.functional as F
-import numpy as np
-import random
 import torch.optim as optim
-from os import path
+
+from QNetwork import QNetwork
+from ReplayBuffer import ReplayBuffer
 
 #INSPIRATIONS: https://youtu.be/wc-FxNENg9U et dqn_agent.py dans la section References/DQL exemple dans le git
 
@@ -13,7 +15,7 @@ class Agent:
 
     def __init__(self,inputDims, numberOfActions, seed, qNetworkPath):
         if torch.cuda.is_available:
-            self.device = torch.device("cuda:0")
+            self.device = torch.device("cuda:0") #carte graphique
         else:
             self.device = torch.device("cpu")
 
@@ -66,7 +68,7 @@ class Agent:
                 self.learn(experiences, self.gamma)
 
 
-    def act(self, state, epsilon = 0.):
+    def act(self, state):
         state = torch.from_numpy(state).float().unsqueeze(0).to(self.device)
         self.qNetworkLocal.eval() # dit au QNetwork de faire une evaluation
 

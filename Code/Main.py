@@ -1,11 +1,13 @@
-import pygame
-from Button import Button
-from SnakeDAO import SnakeDAO
-from Game import Game
-from Simulation import Simulation
-from Graph import Graph
 import time
+
+import pygame
+
+from Button import Button
 from Color import Color
+from Game import Game
+from Graph import Graph
+from Simulation import Simulation
+from SnakeDAO import SnakeDAO
 
 
 class Main:
@@ -51,9 +53,9 @@ class Main:
             if self.currentMenu == "MainMenu":
                 self.showMainMenu()
             elif self.currentMenu == "GameConfig":
-                self.setGameConfig()
+                self.showGameConfig()
             elif self.currentMenu == "SimulationConfig":
-                self.setSimulationConfig()
+                self.showSimulationConfig()
             elif self.currentMenu == "Game":
                 self.currentGame.showGame()
             elif self.currentMenu == "Simulation":
@@ -107,7 +109,7 @@ class Main:
                 self.running = False
 
     
-    def setGameConfig(self):
+    def showGameConfig(self):
 
         headColorButtons = [None] * 10
         bodyColorButtons = [None] * 10
@@ -217,7 +219,7 @@ class Main:
 
 
     
-    def setSimulationConfig(self):
+    def showSimulationConfig(self):
 
         headColorButtons = [None] * 10
         bodyColorButtons = [None] * 10

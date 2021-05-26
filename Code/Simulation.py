@@ -1,10 +1,13 @@
-import pygame
-from Button import Button
-from Board import Board
-from Agent import Agent
-import numpy as np
-import torch
 import time
+
+import numpy as np
+import pygame
+import torch
+
+from Agent import Agent
+from Board import Board
+from Button import Button
+
 
 class Simulation:
     def __init__(self, main, headColor, bodyColor, appleColor, boardSize, numberOfEpisodes): 
@@ -30,7 +33,7 @@ class Simulation:
         self.avgScore = 0
         self.episodes = 0
         self.steps = 0
-        self.maxSteps = 5000
+        self.maxSteps = 10000
         self.timer = 0
         self.isPaused = False
         
@@ -69,7 +72,7 @@ class Simulation:
             self.highscore = 0
 
 
-        self.createBoards()
+        self.createBoard()
         self.showSimulation()
         
         
@@ -90,7 +93,7 @@ class Simulation:
         scoreText = font.render("Score: " + str(self.score), 1, (0,255,0))
         self.window.blit(scoreText, (100,1025))
 
-        highscoreText = font.render("Highscore: " + str(self.highscore), 1, (0,255,0)) #va aller chercher la valeur dans la bd
+        highscoreText = font.render("Highscore: " + str(self.highscore), 1, (0,255,0))
         self.window.blit(highscoreText, (375, 1025))
 
         agentRewardText = font.render("Cur. Reward: " + str(round(self.agentCurrentScore,2)), 1, (0,255,0))
@@ -152,7 +155,7 @@ class Simulation:
             for steps in range(self.maxSteps):
                 
                                 
-                for event in pygame.event.get(): #si on clique sur le X
+                for event in pygame.event.get(): 
                     if event.type == pygame.QUIT:
                         self.main.snakeDAO.dbCloseConnection()
                         self.main.running = False
@@ -226,10 +229,7 @@ class Simulation:
 
             
 
-        
-
-
-    def createBoards(self):
+    def createBoard(self):
         self.board = Board(self,self.boardArrayX, self.boardArrayY, self.boardLeftPadding, self.boardTopPadding, 18)
         
 
